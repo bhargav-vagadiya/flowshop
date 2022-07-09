@@ -1,3 +1,4 @@
+import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/Splash/Splash.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'FlowShop',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        fontFamily: "Squre",
+        elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(brown))),
+        colorScheme: ColorScheme.fromSwatch().copyWith(primary: Colors.white),
+        pageTransitionsTheme: const PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder()}),
       ),
       home: const Splash(),
     );
