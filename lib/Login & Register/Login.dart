@@ -1,6 +1,11 @@
 import 'package:flowshop/Constants/Constant.dart';
+import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Login%20&%20Register/Register.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -10,7 +15,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool PasswordVisible = true;
+  bool passwordVisible = false;
+  TextEditingController username = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,72 +40,97 @@ class _LoginState extends State<Login> {
                     fontSize: 35, fontWeight: FontWeight.bold, color: brown),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 70,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 20),
-              child: Container(
-                padding: const EdgeInsets.only(
-                    left: 20.0, right: 20, bottom: 40, top: 20),
-                decoration: BoxDecoration(
-                    color: brownTransperent,
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                child: Column(
-                  children: [
-                     TextField(
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                          hintText: "Username",
-                          hintStyle:
-                              TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
-                      cursorColor: Colors.white,
-                    ),
-                    SizedBox(height: 20,),
-                    TextField(
-                      obscureText: PasswordVisible,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                          suffixIcon: IconButton(onPressed: (){
-                            setState((){
-                              PasswordVisible = !PasswordVisible;
-                            });
-                          }, icon:  Icon(Icons.remove_red_eye,color: !PasswordVisible? brown: Colors.white.withOpacity(0.50),)),
-                          enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white)),
-                          hintText: "Password",
-                          hintStyle:
-                               TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
-                      cursorColor: Colors.white,
-                    ),
-                  ],
+              child: AutofillGroup(
+                child: Container(
+                  padding: const EdgeInsets.only(
+                      left: 20.0, right: 20, bottom: 40, top: 20),
+                  decoration: BoxDecoration(
+                      color: brownTransperent,
+                      borderRadius: const BorderRadius.all(Radius.circular(20))),
+                  child: Column(
+                    children: [
+                       TextField(
+                         controller: username,
+                        style: const TextStyle(color: Colors.white),
+                        enableSuggestions: true,
+                         textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            hintText: "Username (mobile number)",
+                            hintStyle:
+                                TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
+                        cursorColor: Colors.white,
+                         autofillHints: const [AutofillHints.username],
+                      ),
+                      const SizedBox(height: 20,),
+                      TextField(
+                        controller: password,
+                        obscureText: !passwordVisible,
+                        enableSuggestions: true,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(onPressed: (){
+                              setState((){
+                                passwordVisible = !passwordVisible;
+                              });
+                            }, icon:  Icon(Icons.remove_red_eye,color: passwordVisible? brown: Colors.white.withOpacity(0.50),)),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            hintText: "Password",
+                            hintStyle:
+                                 TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
+                        cursorColor: Colors.white,
+                        keyboardType: TextInputType.visiblePassword,
+                        autofillHints: const [AutofillHints.password],
+                        onEditingComplete: () => TextInput.finishAutofillContext(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             Center(
                 child: ElevatedButton(
-                  style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(200, 60))),
-              onPressed: () {},
-              child: Text(
+                  style: ButtonStyle(minimumSize: MaterialStateProperty.all(const Size(200, 60))),
+              onPressed: () async{
+                   if(username.text.trim().isEmpty){
+
+                   }else if(password.text.trim().isEmpty){
+
+                   }else{
+                     TextInput.finishAutofillContext(shouldSave: true);
+
+                     Database db = await DbHelper.initdatabase();
+                     bool result = await DbHelper.checkUser(db, username.text.trim(), password.text.trim());
+                     if (kDebugMode) {
+                       print(result);
+                     }
+                   }
+              },
+              child: const Text(
                 "Login",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Color(0xffe9c858)),
               ),
             )),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Center(
               child: RichText(
                   text: TextSpan(
                       text: "Don't have an account? ",
-                      style: TextStyle(color: brown,fontSize: 20,fontWeight: FontWeight.w500),
-                      children: [TextSpan(text: "Sign in",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),recognizer: TapGestureRecognizer()..onTap=(){
-
+                      style: const TextStyle(color: brown,fontSize: 20,fontWeight: FontWeight.w500),
+                      children: [TextSpan(text: "Sign in",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),recognizer: TapGestureRecognizer()..onTap=(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Register()));
                       })])),
             )
           ],

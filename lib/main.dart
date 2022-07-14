@@ -1,8 +1,11 @@
 import 'package:flowshop/Constants/Constant.dart';
+import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Splash/Splash.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  DbHelper.initdatabase();
   runApp(const MyApp());
 }
 
