@@ -1,3 +1,4 @@
+import 'package:flowshop/Login%20&%20Register/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,10 +31,33 @@ class _MyDrawerState extends State<MyDrawer> {
       child: ListView(
         children: [
           ListTile(
-            title: const Text("Welcome,",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
-            subtitle: Text(username.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+            title: const Text(
+              "Welcome,",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              username.toString(),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
           ),
-          Divider(color: Colors.black,thickness: 1,)
+          Divider(
+            color: Colors.black,
+            thickness: 1,
+          ),
+          ListTile(title: Text("My Cart"),),
+          ListTile(title: Text("My Orders"),),
+          ListTile(
+            onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Login(changePassword: true,)));},
+            title: Text("Change Password"),
+          ),
+          ListTile(
+            title: Text("Log out"),
+            onTap: () async{
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.remove("UserName");
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login(changePassword: false)));
+            },
+          )
         ],
       ),
     );

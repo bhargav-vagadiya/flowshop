@@ -1,6 +1,8 @@
 import 'package:flowshop/Constants/Constant.dart';
+import 'package:flowshop/Home/Dashboard.dart';
 import 'package:flowshop/Login & Register/Login.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -11,11 +13,22 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
 
+  userIsLogged() async{
+    String? username;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    username = prefs.getString("UserName");
+    if(username==null){
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> Login(changePassword: false,)));
+    }else{
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=> const Dashboard()));
+    }
+  }
+
   @override
   initState(){
     super.initState();
     Future.delayed(const Duration(seconds: 2),(){
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>const Login()));
+      userIsLogged();
     });
   }
 

@@ -132,6 +132,31 @@ class DbHelper {
       }
       return false;
     }
+  }
 
+  static changeUserPassword(Database db,String oldPassword,String newPassword) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString("id");
+    try{
+      var result = await db.rawQuery("select password from Users where user_id=$id");
+
+      if (kDebugMode) {
+        print(result[0]['password']);
+      }
+      if(oldPassword==result[0]['password'].toString().trim()){
+        await db.rawUpdate(
+            "update Users set password='$newPassword' where user_id=$id");
+        Fluttertoast.showToast(msg: "Password Updated Successfully");
+        return true;
+      }else{
+        Fluttertoast.showToast(msg: "Old Password is Incorrect");
+        return false;
+      }
+    }catch(e){
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
+    }
   }
 }

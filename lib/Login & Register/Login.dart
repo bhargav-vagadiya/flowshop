@@ -6,18 +6,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
-
+  bool changePassword;
+  Login({Key? key,required this.changePassword}) : super(key: key);
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
 
-  bool passwordVisible = false;
+  bool passwordVisible = false,oldPasswordVisible = false,newPasswordVisible = false;
   TextEditingController username = TextEditingController();
+  TextEditingController oldPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
   TextEditingController password = TextEditingController();
   bool process = false;
   @override
@@ -34,10 +37,10 @@ class _LoginState extends State<Login> {
         ListView(
          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
+             Padding(
               padding: EdgeInsets.only(top: 100.0, left: 40),
               child: Text(
-                "Login With Us",
+               widget.changePassword? "Change Password" : "Login With Us",
                 style: TextStyle(
                     fontSize: 35, fontWeight: FontWeight.bold, color: brown),
               ),
@@ -56,7 +59,7 @@ class _LoginState extends State<Login> {
                       borderRadius: const BorderRadius.all(Radius.circular(20))),
                   child: Column(
                     children: [
-                       TextField(
+                      if(!widget.changePassword) TextField(
                          controller: username,
                         style: const TextStyle(color: Colors.white),
                         enableSuggestions: true,
@@ -70,7 +73,50 @@ class _LoginState extends State<Login> {
                         cursorColor: Colors.white,
                          autofillHints: const [AutofillHints.username],
                       ),
+                      if(widget.changePassword) TextField(
+                        controller: oldPassword,
+                        obscureText: !oldPasswordVisible,
+                        enableSuggestions: true,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(onPressed: (){
+                              setState((){
+                                oldPasswordVisible = !oldPasswordVisible;
+                              });
+                            }, icon:  Icon(Icons.remove_red_eye,color: oldPasswordVisible? brown: Colors.white.withOpacity(0.50),)),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            hintText: "Old Password",
+                            hintStyle:
+                            TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
+                        cursorColor: Colors.white,
+                        keyboardType: TextInputType.visiblePassword,
+                        autofillHints: const [AutofillHints.password],
+                        onEditingComplete: () => TextInput.finishAutofillContext(),
+                      ),
                       const SizedBox(height: 20,),
+                      if(widget.changePassword) TextField(
+                        controller: newPassword,
+                        obscureText: !newPasswordVisible,
+                        enableSuggestions: true,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(onPressed: (){
+                              setState((){
+                                newPasswordVisible = !newPasswordVisible;
+                              });
+                            }, icon:  Icon(Icons.remove_red_eye,color: newPasswordVisible? brown: Colors.white.withOpacity(0.50),)),
+                            enabledBorder: const UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white)),
+                            hintText: "New Password",
+                            hintStyle:
+                            TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
+                        cursorColor: Colors.white,
+                        keyboardType: TextInputType.visiblePassword,
+                        autofillHints: const [AutofillHints.password],
+                        onEditingComplete: () => TextInput.finishAutofillContext(),
+                      ),
+                      if(widget.changePassword) const SizedBox(height: 20,),
                       TextField(
                         controller: password,
                         obscureText: !passwordVisible,
@@ -84,7 +130,7 @@ class _LoginState extends State<Login> {
                             }, icon:  Icon(Icons.remove_red_eye,color: passwordVisible? brown: Colors.white.withOpacity(0.50),)),
                             enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white)),
-                            hintText: "Password",
+                            hintText: widget.changePassword?"Confirm New Password" :"Password",
                             hintStyle:
                                  TextStyle(color: Colors.white.withOpacity(0.70), fontSize: 20)),
                         cursorColor: Colors.white,
@@ -104,37 +150,69 @@ class _LoginState extends State<Login> {
                 child: ElevatedButton(
                   style: ButtonStyle(minimumSize: MaterialStateProperty.all(const Size(200, 60))),
               onPressed:  () async{
-                   if(username.text.trim().isEmpty){
+                    if(!widget.changePassword){
+                      if(username.text.trim().isEmpty){
 
-                   }else if(password.text.trim().isEmpty){
+                      }else if(password.text.trim().isEmpty){
 
-                   }else{
-                     setState((){
-                       process=true;
-                     });
-                     var database = await DbHelper.initdatabase();
-                     bool result = await DbHelper.checkUser(database, username.text.trim(), password.text.trim());
-                     setState((){
-                       process=false;
-                     });
-                     if (kDebugMode) {
-                       print(result);
-                     }
-                     if(result){
-                       TextInput.finishAutofillContext(shouldSave: true);
-                       Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
-                     }
-                   }
+                      }else{
+                        setState((){
+                          process=true;
+                        });
+                        var database = await DbHelper.initdatabase();
+                        bool result = await DbHelper.checkUser(database, username.text.trim(), password.text.trim());
+                        setState((){
+                          process=false;
+                        });
+                        if (kDebugMode) {
+                          print(result);
+                        }
+                        if(result){
+                          TextInput.finishAutofillContext(shouldSave: true);
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
+                        }
+                      }
+                    }else{
+                      if(oldPassword.text.trim().isEmpty){
+                        Fluttertoast.showToast(msg: "please enter old password");
+                      }else if(newPassword.text.trim().isEmpty){
+                        Fluttertoast.showToast(msg: "please enter new password");
+                      }else if(password.text.trim().isEmpty){
+                        Fluttertoast.showToast(msg: "please enter new confirm password");
+                      }else if(newPassword.text.trim()!=password.text.trim()){
+                        Fluttertoast.showToast(msg: "Password didn't match");
+                      }else{
+                        setState((){
+                          process=true;
+                        });
+                        var database = await DbHelper.initdatabase();
+                        bool result = await DbHelper.changeUserPassword(database,oldPassword.text.trim(),newPassword.text.trim());
+                        setState((){
+                          process=false;
+                        });
+                        if (kDebugMode) {
+                          print(result);
+                        }
+                        if(result){
+                          if(!widget.changePassword){
+                            TextInput.finishAutofillContext(shouldSave: true);
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
+                          }else{
+                            Navigator.pop(context);
+                          }
+                        }
+                      }
+                    }
               },
-              child: process? CircularProgressIndicator() : const Text(
-                "Login",
+              child: process? CircularProgressIndicator() :  Text(
+                widget.changePassword? "Change Password" : "Login",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Color(0xffe9c858)),
               ),
             )),
             const SizedBox(
               height: 20,
             ),
-            Center(
+           if(!widget.changePassword)  Center(
               child: RichText(
                   text: TextSpan(
                       text: "Don't have an account? ",

@@ -11,6 +11,8 @@ const brown = Color(0xff772f00);
 var brownTransperent = Color(0xff772f00).withOpacity(0.40);
 const bgcolor = Colors.white;
 const creamColor = Color(0xffe9c858);
+const homeproduct = Color(0xffefebeb);
+const homeProductBorderColor = Color(0xffd3d0d0);
 
 
 //icons
