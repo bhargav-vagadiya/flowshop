@@ -1,11 +1,11 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Home/Dashboard.dart';
 import 'package:flowshop/Login%20&%20Register/Register.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -15,9 +15,11 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   bool passwordVisible = false;
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool process = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +31,8 @@ class _LoginState extends State<Login> {
               image: DecorationImage(
                   image: AssetImage(backgroundImage), fit: BoxFit.fill)),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        ListView(
+         // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
               padding: EdgeInsets.only(top: 100.0, left: 40),
@@ -101,22 +103,30 @@ class _LoginState extends State<Login> {
             Center(
                 child: ElevatedButton(
                   style: ButtonStyle(minimumSize: MaterialStateProperty.all(const Size(200, 60))),
-              onPressed: () async{
+              onPressed:  () async{
                    if(username.text.trim().isEmpty){
 
                    }else if(password.text.trim().isEmpty){
 
                    }else{
-                     TextInput.finishAutofillContext(shouldSave: true);
-
-                     Database db = await DbHelper.initdatabase();
-                     bool result = await DbHelper.checkUser(db, username.text.trim(), password.text.trim());
+                     setState((){
+                       process=true;
+                     });
+                     var database = await DbHelper.initdatabase();
+                     bool result = await DbHelper.checkUser(database, username.text.trim(), password.text.trim());
+                     setState((){
+                       process=false;
+                     });
                      if (kDebugMode) {
                        print(result);
                      }
+                     if(result){
+                       TextInput.finishAutofillContext(shouldSave: true);
+                       Navigator.push(context, MaterialPageRoute(builder: (context)=>Dashboard()));
+                     }
                    }
               },
-              child: const Text(
+              child: process? CircularProgressIndicator() : const Text(
                 "Login",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Color(0xffe9c858)),
               ),
@@ -130,7 +140,7 @@ class _LoginState extends State<Login> {
                       text: "Don't have an account? ",
                       style: const TextStyle(color: brown,fontSize: 20,fontWeight: FontWeight.w500),
                       children: [TextSpan(text: "Sign in",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 20),recognizer: TapGestureRecognizer()..onTap=(){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const Register()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>Register(update: false,)));
                       })])),
             )
           ],

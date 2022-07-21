@@ -1,11 +1,12 @@
+import 'dart:async';
+
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Splash/Splash.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  DbHelper.initdatabase();
   runApp(const MyApp());
 }
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'FlowShop',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(foregroundColor: Colors.black),
         fontFamily: "Squre",
         elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(brown))),
         colorScheme: ColorScheme.fromSwatch().copyWith(primary: Colors.white),
