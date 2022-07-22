@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/Home/MyDrawer.dart';
 import 'package:flowshop/Home/Search.dart';
@@ -110,31 +112,73 @@ class _DashboardState extends State<Dashboard> {
               child: Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
+                    padding: const EdgeInsets.only(right: 10.0, left: 100),
                     child: Align(
                         alignment: Alignment.topRight,
                         child: Container(
                           height: 300,
-                          width: 280,
+                          width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                               color: creamColor,
                               borderRadius: BorderRadius.circular(50)),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 120,
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 50.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text(
+                                        "Flower Product Title",
+                                        maxLines: 3,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                            color: Colors.brown,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 25),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 20,),
+                                      Text(
+                                        "\$100.00",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 25),
+                                        textAlign: TextAlign.left,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         )),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 50.0,left: 5),
-                    child: Align(alignment: Alignment.centerLeft,child:  Container(
-                      height: 210,
-                      width: 210,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50)),
-                      child: Image.asset("images/products/product2.webp"),
-                    ),),
+                  Positioned(
+                    left: 5,
+                    top: 50,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        height: 210,
+                        width: 200,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50)),
+                        child: Image.asset("images/products/product2.webp",
+                            fit: BoxFit.cover),
+                      ),
+                    ),
                   )
                 ],
               ),
             ),
-            const SizedBox(height: 50,),
+            const SizedBox(
+              height: 50,
+            ),
             SizedBox(
               height: 180,
               child: ListView.builder(
@@ -150,9 +194,32 @@ class _DashboardState extends State<Dashboard> {
                           child: Align(
                             alignment: Alignment.bottomCenter,
                             child: Container(
+                              padding: EdgeInsets.only(left: 20, right: 20),
                               height: 120,
-                              width: 150,
-                              decoration: BoxDecoration(color: homeproduct,border: Border.all(color: homeProductBorderColor),borderRadius: BorderRadius.circular(20)),
+                              width: 145,
+                              decoration: BoxDecoration(
+                                  color: homeproduct,
+                                  border:
+                                      Border.all(color: homeProductBorderColor),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Column(
+                                children: const [
+                                  SizedBox(
+                                    height: 80,
+                                  ),
+                                  Expanded(
+                                      child: Text(
+                                    "Product Title",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12),
+                                    textAlign: TextAlign.start,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ))
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -163,7 +230,8 @@ class _DashboardState extends State<Dashboard> {
                             child: Container(
                               height: 120,
                               width: 150,
-                              child: Image.asset("images/products/product3.webp"),
+                              child:
+                                  Image.asset("images/products/product3.webp"),
                             ),
                           ),
                         ),
