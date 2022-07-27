@@ -8,6 +8,8 @@ import 'package:get/get.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  var db = await DbHelper.initdatabase();
+  DbHelper.getProductDetails(db);
   runApp(const MyApp());
 }
 

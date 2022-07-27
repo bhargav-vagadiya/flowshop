@@ -22,9 +22,10 @@ class DbHelper {
 
       await db.execute("""Create table Product(
                     product_id integer primary key autoincrement,
-                    product_name text,
+                    product_name text unique,
                     image_path text,
-                    price int unique,
+                    qty int,
+                    price int,
                     description text,
                     ratings text)""");
 
@@ -44,6 +45,34 @@ class DbHelper {
                     order_confirm_time text,
                     out_of_delivery_time text,
                     foreign key(cart_id) references Cart(cart_id))""");
+    }, onOpen: (Database db) async {
+      try {
+        await db.execute("DROP TABLE IF EXISTS Product");
+        await db.execute("""Create table Product(
+                    product_id integer primary key autoincrement,
+                    product_name text unique,
+                    image_path text,
+                    qty int,
+                    price int,
+                    description text,
+                    ratings text)""");
+        await db.rawInsert(
+            "insert into Product(product_name,image_path,qty,price,description) values('Mixed Bouquet Each','images/products/product2.webp',100,599,'This tantalizing need no decoration! Celebrate a spring birthday, send your love, or simply let someone know you are thinking of them with this stunning monochrome bouquet. Presented in a clear cylinder vase, the minimalist gift appeals to purple-lovers, tulip-devotees and those with a more elegant and simple sense of style.')");
+        await db.rawInsert(
+            "insert into Product(product_name,image_path,qty,price,description) values('Passionate Purple Tulips Bouquet','images/products/product1.webp',50,499,'Pure lovely. Long-stemmed purple tulips are a tantalizing treat in our shimmering mercury glass vase. This bouquet is a timeless symbol of your singular love.')");
+        await db.rawInsert(
+            "insert into Product(product_name,image_path,qty,price,description) values('Decorative Roses With Waxflower','images/products/product3.webp',70,549,'Just peachy! This soft, feminine bouquet of peach-colored spring flowers is presented in a French country ceramic pot with fleur-de-lis motif. The country style floral arrangement is a pretty way to send your best wishes.')");
+        await db.rawInsert(
+            "insert into Product(product_name,image_path,qty,price,description) values('Sun Kissed','images/products/product4.webp',40,399,'Sun Kissed is a sweet bud vase filled with spray roses and cheerful sunflowers! Sword ferns and ruscus balance out the beautiful, bright colors. These flowers are guaranteed to bring a smile to anyone’s face!')");
+        if (kDebugMode) {
+          print("product inserted😍");
+        }
+      } on Exception catch (e) {
+        // TODO
+        if (kDebugMode) {
+          print("already inserted😒 $e");
+        }
+      }
     });
     return database;
   }
@@ -120,13 +149,14 @@ class DbHelper {
       String lastName, String address) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("id");
-    try{
+    try {
       await db.rawUpdate(
           "update Users set mobile_number='$mobileNumber',first_name='$firstName',last_name='$lastName',address='$address' where user_id=$id");
       Fluttertoast.showToast(msg: "Profile Updated Successfully");
       return true;
-    }catch(e){
-      Fluttertoast.showToast(msg: "This mobile number is registered to other user.");
+    } catch (e) {
+      Fluttertoast.showToast(
+          msg: "This mobile number is registered to other user.");
       if (kDebugMode) {
         print(e);
       }
@@ -134,29 +164,36 @@ class DbHelper {
     }
   }
 
-  static changeUserPassword(Database db,String oldPassword,String newPassword) async{
+  static changeUserPassword(
+      Database db, String oldPassword, String newPassword) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var id = prefs.getString("id");
-    try{
-      var result = await db.rawQuery("select password from Users where user_id=$id");
+    try {
+      var result =
+          await db.rawQuery("select password from Users where user_id=$id");
 
       if (kDebugMode) {
         print(result[0]['password']);
       }
-      if(oldPassword==result[0]['password'].toString().trim()){
+      if (oldPassword == result[0]['password'].toString().trim()) {
         await db.rawUpdate(
             "update Users set password='$newPassword' where user_id=$id");
         Fluttertoast.showToast(msg: "Password Updated Successfully");
         return true;
-      }else{
+      } else {
         Fluttertoast.showToast(msg: "Old Password is Incorrect");
         return false;
       }
-    }catch(e){
+    } catch (e) {
       if (kDebugMode) {
         print(e);
       }
       return false;
     }
+  }
+
+  static getProductDetails(Database db) async {
+    var productData = await db.rawQuery("select * from Product");
+    return productData;
   }
 }

@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:flowshop/Constants/Constant.dart';
+import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Home/MyDrawer.dart';
+import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flowshop/Home/Search.dart';
 import 'package:flowshop/Login%20&%20Register/Register.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +22,7 @@ class _DashboardState extends State<Dashboard> {
   final GlobalKey<ScaffoldState> _scafffold = GlobalKey<ScaffoldState>();
   String? username;
 
-  List products = [1, 2, 3, 4, 5];
+  List products = [];
 
   getUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -28,10 +31,21 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  fillProducts() async {
+    var db = await DbHelper.initdatabase();
+    var ProductList = await DbHelper.getProductDetails(db);
+    products = ProductList;
+    if (kDebugMode) {
+      print(products);
+    }
+    setState(() {});
+  }
+
   @override
   initState() {
     super.initState();
     getUserName();
+    fillProducts();
   }
 
   @override
@@ -60,7 +74,7 @@ class _DashboardState extends State<Dashboard> {
               },
               icon: Image.asset(profileIcon))
         ],
-        title: Text("Flowshop", style: TextStyle(color: Colors.black)),
+        title: const Text("Flowshop", style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -76,8 +90,10 @@ class _DashboardState extends State<Dashboard> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.20),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                      color: homeproduct,
+                      boxShadow: [BoxShadow(color: Colors.grey,blurRadius: 10,offset: Offset(0, 3),)],
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.only(left: 8.0, right: 5),
                   height: 40,
@@ -119,35 +135,38 @@ class _DashboardState extends State<Dashboard> {
                           height: 300,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
+                              boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.8),blurRadius: 8,offset: Offset(5, 5),)],
                               color: creamColor,
                               borderRadius: BorderRadius.circular(50)),
                           child: Row(
                             children: [
-                              SizedBox(
+                              const SizedBox(
                                 width: 120,
                               ),
                               Flexible(
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 50.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: const [
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       Text(
-                                        "Flower Product Title",
+                                        "${products[2]['product_name']}",
                                         maxLines: 3,
                                         softWrap: true,
-                                        style: TextStyle(
-                                            color: Colors.brown,
+                                        style: const TextStyle(
+                                            color: Color(0xff772f00),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 25),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      SizedBox(height: 20,),
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
                                       Text(
-                                        "\$100.00",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 25),
+                                        "\$${products[2]['price']}",
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 25),
                                         textAlign: TextAlign.left,
                                       )
                                     ],
@@ -168,7 +187,7 @@ class _DashboardState extends State<Dashboard> {
                         width: 200,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50)),
-                        child: Image.asset("images/products/product2.webp",
+                        child: Image.asset("${products[2]['image_path']}",
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -184,58 +203,71 @@ class _DashboardState extends State<Dashboard> {
               child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemCount: 10,
+                  itemCount: products.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Stack(children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20.0),
-                          child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              height: 120,
-                              width: 145,
-                              decoration: BoxDecoration(
-                                  color: homeproduct,
-                                  border:
-                                      Border.all(color: homeProductBorderColor),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Column(
-                                children: const [
-                                  SizedBox(
-                                    height: 80,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                    "Product Title",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                    textAlign: TextAlign.start,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ))
-                                ],
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(ProductPage(
+                            product_id: products[index]['product_id'],
+                            product_name: products[index]['product_name'],
+                            image_path: products[index]['image_path'],
+                            qty: products[index]['qty'],
+                            price: products[index]['price'],
+                            description: products[index]['description'],
+                          ));
+                        },
+                        child: Stack(children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                height: 120,
+                                width: 145,
+                                decoration: BoxDecoration(
+                                    color: homeproduct,
+                                    border: Border.all(
+                                        color: homeProductBorderColor),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 80,
+                                    ),
+                                    Expanded(
+                                        child: Text(
+                                      "${products[index]['product_name']}",
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12),
+                                      textAlign: TextAlign.start,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ))
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 30.0),
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              height: 120,
-                              width: 150,
-                              child:
-                                  Image.asset("images/products/product3.webp"),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 30.0),
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Container(
+                                height: 120,
+                                width: 150,
+                                child: Image.asset(
+                                    "${products[index]['image_path']}"),
+                              ),
                             ),
                           ),
-                        ),
-                      ]),
+                        ]),
+                      ),
                     );
                   }),
             )
