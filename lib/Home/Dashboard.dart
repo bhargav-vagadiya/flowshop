@@ -91,7 +91,6 @@ class _DashboardState extends State<Dashboard> {
                 child: Container(
                   decoration: BoxDecoration(
                       color: homeproduct,
-                      boxShadow: [BoxShadow(color: Colors.grey,blurRadius: 10,offset: Offset(0, 3),)],
                       borderRadius:
                           const BorderRadius.all(Radius.circular(10))),
                   width: MediaQuery.of(context).size.width,
@@ -155,7 +154,7 @@ class _DashboardState extends State<Dashboard> {
                                         maxLines: 3,
                                         softWrap: true,
                                         style: const TextStyle(
-                                            color: Color(0xff772f00),
+                                            color: darkbrown,
                                             fontWeight: FontWeight.bold,
                                             fontSize: 25),
                                         overflow: TextOverflow.ellipsis,
@@ -224,11 +223,13 @@ class _DashboardState extends State<Dashboard> {
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: Container(
+
                                 padding:
                                     const EdgeInsets.only(left: 20, right: 20),
                                 height: 120,
                                 width: 145,
                                 decoration: BoxDecoration(
+                                    boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.8),blurRadius: 6,offset: Offset(3, 2),)],
                                     color: homeproduct,
                                     border: Border.all(
                                         color: homeProductBorderColor),
