@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbHelper {
+
   static Future<Database> initdatabase() async {
     var getdbpath = await getDatabasesPath();
     String dbpath = "$getdbpath/flowshop.db";
@@ -28,6 +29,13 @@ class DbHelper {
                     price int,
                     description text,
                     ratings text)""");
+
+      await db.execute("""Create table WishList(
+                    wishlist_id integer primary key autoincrement,
+                    product_id integer,
+                    user_id integer,
+                    foreign key(product_id) references Product(product_id),
+                    foreign key(user_id) references Users(user_id))""");
 
       await db.execute("""Create table Cart(
                     cart_id integer primary key autoincrement,
@@ -77,6 +85,12 @@ class DbHelper {
     return database;
   }
 
+  static getUserId() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userId = prefs.getString("id")!;
+    return userId;
+  }
+
   static insertUser(Database db, String firstName, String lastName,
       String mobileNumber, String address, String password) async {
     List<Map<String, Object?>> result = await db
@@ -93,6 +107,57 @@ class DbHelper {
       }
     } else {
       Fluttertoast.showToast(msg: "User already Exists");
+      return false;
+    }
+  }
+
+  static addWishlist(productId, userId) async {
+    var db = await initdatabase();
+    try {
+     await db.execute(
+          "insert into WishList(product_id,user_id)values($productId,$userId)");
+      return true;
+    } on Exception catch (e) {
+      // TODO
+      return false;
+    }
+  }
+
+  static Future<bool> productInWishlist(productId, userId) async {
+    var db = await initdatabase();
+   try {
+     var result = await db.rawQuery(
+          "select * from Wishlist where product_id=$productId and user_id=$userId ");
+     if(result.isNotEmpty){
+       return true;
+     }else{
+       return false;
+     }
+   } on Exception catch (e) {
+     // TODO
+     return false;
+   }
+  }
+
+  static getWishlistProducts(userId) async {
+    var db = await initdatabase();
+    try {
+      var result = db.rawQuery(
+          "select p.product_id,p.product_name,p.image_path,p.qty,p.price,p.description,u.user_id from Product p,Users u,Wishlist w where p.product_id=w.product_id and u.user_id=w.user_id and w.user_id=$userId");
+      print(result);
+      return result;
+    } on Exception catch (e) {
+      // TODO
+    }
+  }
+
+  static removeWishlistByUser(proudctId,userId) async{
+    var db = await initdatabase();
+    try {
+      db.rawDelete("delete from Wishlist where product_id=$proudctId and user_id=$userId");
+      return true;
+    } on Exception catch (e) {
+      // TODO
       return false;
     }
   }
@@ -194,6 +259,14 @@ class DbHelper {
 
   static getProductDetails(Database db) async {
     var productData = await db.rawQuery("select * from Product");
+    return productData;
+  }
+
+  static searchProduct(String searchText) async {
+    var db = await initdatabase();
+    var productData = await db.rawQuery(
+        "select * from Product where product_name like '$searchText%'");
+    print(productData);
     return productData;
   }
 }

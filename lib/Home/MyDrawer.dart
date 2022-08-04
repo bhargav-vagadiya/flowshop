@@ -1,3 +1,4 @@
+import 'package:flowshop/Home/Wishlist.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,9 +47,12 @@ class _MyDrawerState extends State<MyDrawer> {
           ),
           ListTile(title: Text("My Cart"),),
           ListTile(title: Text("My Orders"),),
+          ListTile(title: Text("My Wishlist"),
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Wishlist()));},),
           ListTile(
-            onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Login(changePassword: true,)));},
             title: Text("Change Password"),
+            onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Login(changePassword: true,)));},
+
           ),
           ListTile(
             title: Text("Log out"),

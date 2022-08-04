@@ -3,53 +3,54 @@ import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
+class Wishlist extends StatefulWidget {
+  const Wishlist({Key? key}) : super(key: key);
 
   @override
-  State<Search> createState() => _SearchState();
+  State<Wishlist> createState() => _WishlistState();
 }
 
-class _SearchState extends State<Search> {
-  TextEditingController search = TextEditingController();
+class _WishlistState extends State<Wishlist> {
 
-  List item = [];
+  List item=[];
 
+  getData() async{
+    var userId = await DbHelper.getUserId();
+    item = await DbHelper.getWishlistProducts(userId);
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: TextField(
-            controller: search,
-            autofocus: true,
-            showCursor: true,
-            cursorColor: Colors.black,
-            onChanged: (value) async {
-              print("executes");
-              item = await DbHelper.searchProduct(value);
-              setState(() {});
-              print(item.length);
-            },
-            decoration: const InputDecoration(
-                border: InputBorder.none,
-                focusColor: Colors.black,
-                hoverColor: Colors.black,
-                fillColor: Colors.black,
-                hintText: "Search")),
-        elevation: 1,
-        actions: [
-          if (search.text.isNotEmpty)
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    search.clear();
-                  });
-                },
-                icon: Icon(Icons.close))
-        ],
-      ),
       backgroundColor: bgcolor,
+      appBar:  AppBar(
+        title: Text("Wishlist",style: TextStyle(color: darkbrown,fontWeight: FontWeight.bold),),
+      elevation: 0,
+      leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Image.asset("images/icons/arrow-backward.webp")),
+      actions: [
+        IconButton(
+            onPressed: () {
+              //Navigator.pop(context);
+            },
+            icon: Image.asset("images/icons/md-cart.webp"))
+      ],
+    ),
       body: ListView.builder(
           shrinkWrap: true,
           itemCount: item.length,
