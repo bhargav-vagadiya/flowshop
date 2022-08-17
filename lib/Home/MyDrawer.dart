@@ -1,3 +1,5 @@
+import 'package:flowshop/Home/Cart.dart';
+import 'package:flowshop/Home/OrderItems.dart';
 import 'package:flowshop/Home/Wishlist.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +47,10 @@ class _MyDrawerState extends State<MyDrawer> {
             color: Colors.black,
             thickness: 1,
           ),
-          ListTile(title: Text("My Cart"),),
-          ListTile(title: Text("My Orders"),),
+          ListTile(title: Text("My Cart"),
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));},),
+          ListTile(title: Text("My Orders"),
+          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderItems()));},),
           ListTile(title: Text("My Wishlist"),
           onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Wishlist()));},),
           ListTile(

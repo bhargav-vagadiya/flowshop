@@ -142,7 +142,10 @@ class _RegisterState extends State<Register> {
                                           mylocation.longitude.toDouble());
                                   var place = placemarks[0];
                                   address.text =
-                                      '${place.street}, ${place.subLocality}, ${place.locality}, ${place.country}, ${place.postalCode}';
+                                      '${place.name}, ${place.locality}, ${place.country}, ${place.postalCode}';
+                                  setState(() {
+
+                                  });
                                 } on PlatformException catch (e) {
                                   if (e.code == 'PERMISSION_DENIED') {
                                     Fluttertoast.showToast(
@@ -153,6 +156,8 @@ class _RegisterState extends State<Register> {
                                         msg:
                                             "permission denied- please enable it from app settings");
                                   }
+                                }catch(e){
+                                  print(e);
                                 }
                               },
                               icon: Icon(

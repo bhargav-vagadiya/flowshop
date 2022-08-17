@@ -1,11 +1,13 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Home/Cart.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductPage extends StatefulWidget {
   String? product_name, image_path, description;
-  int? product_id, qty, price;
+  int? product_id, qty;
+  double? price;
 
   ProductPage(
       {Key? key,
@@ -128,7 +130,12 @@ class _ProductPageState extends State<ProductPage> {
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(minimumSize: Size(200, 60)),
-                                    onPressed: () {},
+                                    onPressed: () async{
+                                      print(count);
+                                     await DbHelper.addProductInCart(widget.product_id,await DbHelper.getUserId(),count);
+                                     print(await DbHelper.selectCartData(await DbHelper.getUserId()));
+                                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Cart()));
+                                    },
                                     child: const Text("Add to Cart",style: TextStyle(fontSize: 25,color: creamColor),))),
                           ],
                         ),
