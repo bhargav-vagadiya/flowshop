@@ -58,6 +58,7 @@ class _ProductPageState extends State<ProductPage> {
         actions: [
           IconButton(
               onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
                 //Navigator.pop(context);
               },
               icon: Image.asset("images/icons/md-cart.webp"))
@@ -93,7 +94,7 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 20,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(right: 50, left: 30),
@@ -102,7 +103,7 @@ class _ProductPageState extends State<ProductPage> {
                         "${widget.description}",
                         softWrap: true,
                         style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 12,
                             color: Colors.black.withOpacity(0.4),
                             fontWeight: FontWeight.bold),
                       )),
@@ -122,7 +123,7 @@ class _ProductPageState extends State<ProductPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text("Price",style: TextStyle(color: brown,fontWeight: FontWeight.bold,fontSize: 18),),
-                                  Text("\$${widget.price}",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w400),)
+                                  Text("$curruncy${widget.price}",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w400),)
                                 ],
                               ),
                             ),

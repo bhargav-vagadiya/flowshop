@@ -94,7 +94,7 @@ class DbHelper {
           try {
             await db.execute("alter table Cart Add cart_quantity integer");
           } on Exception catch (e) {
-            // TODO
+          // TODO
           }
           await db.execute("DROP TABLE IF EXISTS Cart");
           await db.execute("""Create table Cart(
@@ -273,6 +273,8 @@ class DbHelper {
       await db.rawUpdate(
           "update Users set mobile_number='$mobileNumber',first_name='$firstName',last_name='$lastName',address='$address' where user_id=$id");
       Fluttertoast.showToast(msg: "Profile Updated Successfully");
+      prefs.remove("id");
+      prefs.remove("UserName");
       return true;
     } catch (e) {
       Fluttertoast.showToast(
@@ -394,7 +396,7 @@ class DbHelper {
 
   static getOrderList() async{
     var db = await initdatabase();
-    var result = await db.rawQuery("select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity, o.payment_mode,o.buying_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} GROUP by op.order_id ");
+    var result = await db.rawQuery("select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity,group_concat(p.price) as product_price,o.total_product_price,o.shipping_charge,o.payment_mode,o.buying_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} GROUP by op.order_id ");
      print(result);
     return result;
   }
@@ -402,8 +404,23 @@ class DbHelper {
   static getOrderDetailFromId(orderId) async{
     var db = await initdatabase();
     var result = await db.rawQuery("select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity, o.payment_mode,o.buying_time,o.order_received_time,o.order_confirm_time,o.out_of_delivery_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} and op.order_id=$orderId GROUP by op.order_id ");
+    print(result);
     return result;
+  }
 
+  static ReceiveOrder(orderId,curruntTime)async{
+    var db = await initdatabase();
+    await db.rawUpdate("update Orders set order_received_time='$curruntTime' where order_id=$orderId");
+  }
+
+  static ConfirmOrder(orderId,curruntTime)async{
+    var db = await initdatabase();
+    await db.rawUpdate("update Orders set order_confirm_time='$curruntTime' where order_id=$orderId");
+  }
+
+  static DeliverOrder(orderId,curruntTime)async{
+    var db = await initdatabase();
+    await db.rawUpdate("update Orders set out_of_delivery_time='$curruntTime' where order_id=$orderId");
   }
 
    // return productResult;

@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
       title: 'FlowShop',
       theme: ThemeData(
         appBarTheme: AppBarTheme(foregroundColor: Colors.black),
-        fontFamily: "Squre",
+        fontFamily: "Swis",
+       // textTheme: TextTheme(titleLarge: TextStyle(fontSize: 15),titleSmall: TextStyle(fontSize: 10),),
         elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(brown))),
         colorScheme: ColorScheme.fromSwatch().copyWith(primary: Colors.white),
         pageTransitionsTheme: const PageTransitionsTheme(builders: {TargetPlatform.android: CupertinoPageTransitionsBuilder()}),

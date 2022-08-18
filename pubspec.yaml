@@ -87,6 +87,10 @@ flutter:
         - asset: fonts/sqr721C.ttf
         - asset: fonts/sqr721bc.ttf
           weight: 900
+    - family: Swis
+      fonts:
+        - asset: fonts/Swis721_Ex_BT_Roman.ttf
+
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

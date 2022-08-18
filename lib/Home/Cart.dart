@@ -30,7 +30,7 @@ class _CartState extends State<Cart> {
   getCartItemWithQuantity() async{
     await getcartItem();
     for (int i = 0; i < item.length; i++) {
-      subtotal+=item[i]['price'];
+      subtotal+=(item[i]['price']*item[i]['cart_quantity']);
     }
     setState(() {
 
@@ -59,13 +59,6 @@ class _CartState extends State<Cart> {
               Navigator.pop(context);
             },
             icon: Image.asset("images/icons/arrow-backward.webp")),
-        actions: [
-          IconButton(
-              onPressed: () {
-                //Navigator.pop(context);
-              },
-              icon: Image.asset("images/icons/md-cart.webp"))
-        ],
       ),
       body: Stack(
         children: [
@@ -151,11 +144,12 @@ class _CartState extends State<Cart> {
                                             Text(
                                               "${item[index]['product_name']}",
                                               style: const TextStyle(
-                                                  fontSize: 16,
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.bold),
                                             ),
+                                            SizedBox(height: 10,),
                                             Text(
-                                              "\$${item[index]['price']}",
+                                              "$curruncy${item[index]['price']*item[index]['cart_quantity']}",
                                               maxLines: 2,
                                               softWrap: true,
                                               overflow: TextOverflow.ellipsis,
@@ -163,7 +157,7 @@ class _CartState extends State<Cart> {
                                             //Expanded(child: Text("${item[index]['description']}"))
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(8.0),
+                                                  const EdgeInsets.only(top:8.0,right: 15.0),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -279,7 +273,7 @@ class _CartState extends State<Cart> {
                             "Sub Total",
                             style: TextStyle(color: darkbrown,fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("\$${subtotal.toDouble()}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
+                          Align(alignment: Alignment.topRight,child: Text("$curruncy${subtotal.toDouble()}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
                         ]),
                       ),
                       Padding(
@@ -289,7 +283,7 @@ class _CartState extends State<Cart> {
                             "Shipping Charge",
                             style: TextStyle(color: darkbrown,fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("\$10.00",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
+                          Align(alignment: Alignment.topRight,child: Text("$curruncy 10.00",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
 
                         ]),
                       ),
@@ -304,7 +298,7 @@ class _CartState extends State<Cart> {
                             "Bag Total",
                             style: TextStyle(color: darkbrown,fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("\$${subtotal+10.00}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
+                          Align(alignment: Alignment.topRight,child: Text("$curruncy${subtotal+10.00}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
                         ]),
                       ),
                       const Expanded(child: SizedBox()),
@@ -332,9 +326,9 @@ class _CartState extends State<Cart> {
                                 DateTime.now(),
                                 subtotal.toDouble(),
                                 10.00);
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyOrder(orderId: orderId,)));
                             DbHelper.removeCartData(await DbHelper.getUserId());
                             getcartItem();
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyOrder(orderId: orderId,)));
                           },
                           style: ElevatedButton.styleFrom(
                               minimumSize:

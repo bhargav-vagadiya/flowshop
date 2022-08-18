@@ -1,5 +1,6 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,6 +48,7 @@ class _WishlistState extends State<Wishlist> {
         IconButton(
             onPressed: () {
               //Navigator.pop(context);
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
             },
             icon: Image.asset("images/icons/md-cart.webp"))
       ],

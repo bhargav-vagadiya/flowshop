@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/MyDrawer.dart';
 import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flowshop/Home/Search.dart';
@@ -134,7 +135,13 @@ class _DashboardState extends State<Dashboard> {
                           height: 300,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.8),blurRadius: 8,offset: Offset(5, 5),)],
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.8),
+                                  blurRadius: 8,
+                                  offset: Offset(5, 5),
+                                )
+                              ],
                               color: creamColor,
                               borderRadius: BorderRadius.circular(50)),
                           child: Row(
@@ -150,23 +157,54 @@ class _DashboardState extends State<Dashboard> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "${products[2]['product_name']}",
+                                        "${products[0]['product_name']}",
                                         maxLines: 3,
                                         softWrap: true,
                                         style: const TextStyle(
                                             color: darkbrown,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 25),
+                                            fontSize: 23),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(
-                                        height: 20,
+                                        height: 30,
                                       ),
                                       Text(
-                                        "\$${products[2]['price']}",
+                                        "$curruncy${products[0]['price']}",
                                         style: const TextStyle(
                                             color: Colors.black, fontSize: 25),
                                         textAlign: TextAlign.left,
+                                      ),
+                                      Expanded(child: SizedBox()),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            right: 20.0, bottom: 20),
+                                        child: Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: InkWell(
+                                              onTap: () async{
+                                                DbHelper.addProductInCart(products[0]['product_id'], await DbHelper.getUserId(),1);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Cart()));
+                                              },
+                                              child: Container(
+                                                height: 50,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                    color: darkbrown,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: creamColor,
+                                                  size: 50,
+                                                ),
+                                              )),
+                                        ),
                                       )
                                     ],
                                   ),
@@ -186,7 +224,7 @@ class _DashboardState extends State<Dashboard> {
                         width: 200,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(50)),
-                        child: Image.asset("${products[2]['image_path']}",
+                        child: Image.asset("${products[0]['image_path']}",
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -223,13 +261,18 @@ class _DashboardState extends State<Dashboard> {
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: Container(
-
                                 padding:
                                     const EdgeInsets.only(left: 20, right: 20),
                                 height: 120,
                                 width: 145,
                                 decoration: BoxDecoration(
-                                    boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.8),blurRadius: 6,offset: Offset(3, 2),)],
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.8),
+                                        blurRadius: 6,
+                                        offset: Offset(3, 2),
+                                      )
+                                    ],
                                     color: homeproduct,
                                     border: Border.all(
                                         color: homeProductBorderColor),

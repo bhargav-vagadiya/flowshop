@@ -22,3 +22,6 @@ const homeProductBorderColor = Color(0xffd3d0d0);
 
 const drawerIcon = "images/menu.webp";
 const profileIcon = "images/profile.webp";
+
+//curruncy
+const curruncy = "₹";
