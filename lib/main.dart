@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'FlowShop',
       theme: ThemeData(
-        useMaterial3: true,
         appBarTheme: AppBarTheme(foregroundColor: Colors.black),
         fontFamily: "Swis",
        // textTheme: TextTheme(titleLarge: TextStyle(fontSize: 15),titleSmall: TextStyle(fontSize: 10),),

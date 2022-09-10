@@ -283,7 +283,7 @@ class _CartState extends State<Cart> {
                             "Shipping Charge",
                             style: TextStyle(color: darkbrown,fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("$curruncy 10.00",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
+                          Align(alignment: Alignment.topRight,child: Text("${curruncy}10.0",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
 
                         ]),
                       ),

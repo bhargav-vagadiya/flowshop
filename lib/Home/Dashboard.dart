@@ -183,7 +183,7 @@ class _DashboardState extends State<Dashboard> {
                                           alignment: Alignment.bottomRight,
                                           child: InkWell(
                                               onTap: () async{
-                                                DbHelper.addProductInCart(products[0]['product_id'], await DbHelper.getUserId(),1);
+                                               await DbHelper.addProductInCart(products[0]['product_id'], await DbHelper.getUserId(),1);
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DbHelper {
-
   static Future<Database> initdatabase() async {
     var getdbpath = await getDatabasesPath();
     String dbpath = "$getdbpath/flowshop.db";
@@ -67,8 +64,6 @@ class DbHelper {
                         order_id integer,
                         foreign key(product_id) references Product(product_id),
                         foreign key(order_id) references Orders(order_id))""");
-
-
     }, onOpen: (Database db) async {
       try {
         await db.rawInsert(
@@ -80,7 +75,6 @@ class DbHelper {
         await db.rawInsert(
             "insert into Product(product_name,image_path,qty,price,description) values('Sun Kissed','images/products/product4.webp',40,399.00,'Sun Kissed is a sweet bud vase filled with spray roses and cheerful sunflowers! Sword ferns and ruscus balance out the beautiful, bright colors. These flowers are guaranteed to bring a smile to anyone’s face!')");
 
-
         if (kDebugMode) {
           print("product inserted😍");
         }
@@ -90,22 +84,22 @@ class DbHelper {
           print("already inserted😒");
         }
       }
-    },onUpgrade: (Database db,int a,int b) async{
-          try {
-            await db.execute("alter table Cart Add cart_quantity integer");
-          } on Exception catch (e) {
-          // TODO
-          }
-          await db.execute("DROP TABLE IF EXISTS Cart");
-          await db.execute("""Create table Cart(
+    }, onUpgrade: (Database db, int a, int b) async {
+      try {
+        await db.execute("alter table Cart Add cart_quantity integer");
+      } on Exception catch (e) {
+        // TODO
+      }
+      await db.execute("DROP TABLE IF EXISTS Cart");
+      await db.execute("""Create table Cart(
                     cart_id integer primary key autoincrement,
                     product_id integer,
                     user_id integer,
                     cart_quantity integer,
                     foreign key(product_id) references Product(product_id),
                     foreign key(user_id) references Users(user_id))""");
-          await db.execute("DROP TABLE IF EXISTS Orders");
-          await db.execute("""Create table Orders(
+      await db.execute("DROP TABLE IF EXISTS Orders");
+      await db.execute("""Create table Orders(
                     order_id integer primary key autoincrement,
                     user_id integer,
                     total_product_price double,
@@ -117,15 +111,15 @@ class DbHelper {
                     out_of_delivery_time text,
                     foreign key(user_id) references Users(user_id))
                     """);
-          await db.execute("DROP TABLE IF EXISTS OrderedProduct");
-          await db.execute("""Create table OrderedProduct(
+      await db.execute("DROP TABLE IF EXISTS OrderedProduct");
+      await db.execute("""Create table OrderedProduct(
                         product_id integer,
                         quantity text,
                         order_id integer,
                         foreign key(product_id) references Product(product_id),
                         foreign key(order_id) references Orders(order_id))""");
-          await db.execute("DROP TABLE IF EXISTS Product");
-          await db.execute("""Create table Product(
+      await db.execute("DROP TABLE IF EXISTS Product");
+      await db.execute("""Create table Product(
                     product_id integer primary key autoincrement,
                     product_name text unique,
                     image_path text,
@@ -134,13 +128,12 @@ class DbHelper {
                     description text,
                     ratings text)""");
 
-
-          print("onUpgrade called");
-        });
+      print("onUpgrade called");
+    });
     return database;
   }
 
-  static getUserId() async{
+  static getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var userId = prefs.getString("id")!;
     return userId;
@@ -169,7 +162,7 @@ class DbHelper {
   static addWishlist(productId, userId) async {
     var db = await initdatabase();
     try {
-     await db.rawInsert(
+      await db.rawInsert(
           "insert into WishList(product_id,user_id)values($productId,$userId)");
       return true;
     } on Exception catch (e) {
@@ -180,18 +173,18 @@ class DbHelper {
 
   static Future<bool> productInWishlist(productId, userId) async {
     var db = await initdatabase();
-   try {
-     var result = await db.rawQuery(
+    try {
+      var result = await db.rawQuery(
           "select * from Wishlist where product_id=$productId and user_id=$userId ");
-     if(result.isNotEmpty){
-       return true;
-     }else{
-       return false;
-     }
-   } on Exception catch (e) {
-     // TODO
-     return false;
-   }
+      if (result.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } on Exception catch (e) {
+      // TODO
+      return false;
+    }
   }
 
   static getWishlistProducts(userId) async {
@@ -199,17 +192,17 @@ class DbHelper {
     try {
       var result = db.rawQuery(
           "select p.product_id,p.product_name,p.image_path,p.qty,p.price,p.description,u.user_id from Product p,Users u,Wishlist w where p.product_id=w.product_id and u.user_id=w.user_id and w.user_id=$userId");
-      print(result);
       return result;
     } on Exception catch (e) {
       // TODO
     }
   }
 
-  static removeWishlistByUser(proudctId,userId) async{
+  static removeWishlistByUser(proudctId, userId) async {
     var db = await initdatabase();
     try {
-      db.rawDelete("delete from Wishlist where product_id=$proudctId and user_id=$userId");
+      db.rawDelete(
+          "delete from Wishlist where product_id=$proudctId and user_id=$userId");
       return true;
     } on Exception catch (e) {
       // TODO
@@ -225,7 +218,6 @@ class DbHelper {
       if (result.isEmpty) {
         List<Map<String, Object?>> result = await db
             .rawQuery("select * from Users where mobile_number='$username'");
-        print(result);
         if (result.isEmpty) {
           Fluttertoast.showToast(msg: "User does not Exists");
           return false;
@@ -234,9 +226,6 @@ class DbHelper {
           return false;
         }
       } else {
-        if (kDebugMode) {
-          print(result);
-        }
         Fluttertoast.showToast(
             msg:
                 "Welcome ${result[0]['first_name']} ${result[0]['last_name']}");
@@ -273,8 +262,11 @@ class DbHelper {
       await db.rawUpdate(
           "update Users set mobile_number='$mobileNumber',first_name='$firstName',last_name='$lastName',address='$address' where user_id=$id");
       Fluttertoast.showToast(msg: "Profile Updated Successfully");
-      prefs.remove("id");
       prefs.remove("UserName");
+      List<Map<String, Object?>> result =
+          await db.rawQuery("select * from Users where user_id=$id");
+      prefs.setString(
+          "UserName", "${result[0]['first_name']} ${result[0]['last_name']}");
       return true;
     } catch (e) {
       Fluttertoast.showToast(
@@ -294,9 +286,6 @@ class DbHelper {
       var result =
           await db.rawQuery("select password from Users where user_id=$id");
 
-      if (kDebugMode) {
-        print(result[0]['password']);
-      }
       if (oldPassword == result[0]['password'].toString().trim()) {
         await db.rawUpdate(
             "update Users set password='$newPassword' where user_id=$id");
@@ -323,107 +312,131 @@ class DbHelper {
     var db = await initdatabase();
     var productData = await db.rawQuery(
         "select * from Product where product_name like '$searchText%'");
-    print(productData);
     return productData;
   }
 
   //Cart
-  static addProductInCart(productId,userId,int cartQuantity) async{
+  static addProductInCart(productId, userId, int cartQuantity) async {
     var db = await initdatabase();
-    await db.rawInsert("insert into Cart(product_id,user_id,cart_quantity) values($productId,$userId,$cartQuantity)");
-    await db.rawUpdate("update Product set qty=qty-$cartQuantity where product_id=$productId");
+    var result = await db.rawQuery(
+        "select product_id,cart_quantity from Cart where product_id=$productId and user_id=$userId");
+    if (result.isEmpty) {
+      await db.rawInsert(
+          "insert into Cart(product_id,user_id,cart_quantity) values($productId,$userId,$cartQuantity)");
+      await db.rawUpdate(
+          "update Product set qty=qty-$cartQuantity where product_id=$productId");
+    } else {
+      if (int.parse(result[0]['cart_quantity'].toString()) < 5) {
+        if (cartQuantity <=
+            5 - int.parse(result[0]['cart_quantity'].toString())) {
+          await db.rawUpdate(
+              "update Cart set cart_quantity=cart_quantity+$cartQuantity where product_id=$productId and user_id=$userId");
+          await db.rawUpdate(
+              "update Product set qty=qty-$cartQuantity where product_id=$productId");
+        } else {
+          Fluttertoast.showToast(msg: "you can't add more than 5 products");
+          await db.rawUpdate(
+              "update Cart set cart_quantity=cart_quantity+${5 - int.parse(result[0]['cart_quantity'].toString())} where product_id=$productId and user_id=$userId");
+          await db.rawUpdate(
+              "update Product set qty=qty-${5 - int.parse(result[0]['cart_quantity'].toString())} where product_id=$productId");
+        }
+      } else {
+        Fluttertoast.showToast(msg: "you can't add more than 5 products");
+      }
+    }
   }
 
-  static removeCartProduct(productId,userId,quantity) async{
+  static removeCartProduct(productId, userId, quantity) async {
     var db = await initdatabase();
-    db.rawDelete("delete from Cart where product_id=$productId and user_id=$userId");
-    await db.rawUpdate("update Product set qty=qty+$quantity where product_id=$productId");
+    db.rawDelete(
+        "delete from Cart where product_id=$productId and user_id=$userId");
+    await db.rawUpdate(
+        "update Product set qty=qty+$quantity where product_id=$productId");
   }
 
-  static removeCartData(userId) async{
+  static removeCartData(userId) async {
     var db = await initdatabase();
     db.rawDelete("delete from Cart where user_id=$userId");
   }
 
-  static changeCartQuantity(productId,String userId,int cartQuantity,bool dec) async{
+  static changeCartQuantity(
+      productId, String userId, int cartQuantity, bool dec) async {
     var db = await initdatabase();
-    if(cartQuantity==0){
-      removeCartProduct(productId, userId,1);
-      //await db.rawUpdate("update Product set qty=qty+1 where product_id=$productId");
-    }else{
-      await db.rawUpdate("update Cart set cart_quantity=$cartQuantity where product_id=$productId and user_id=$userId");
-      if(dec){
-        await  db.rawUpdate("update Product set qty=qty+1 where product_id=$productId");
-      }else{
-        await  db.rawUpdate("update Product set qty=qty-1 where product_id=$productId");
+    if (cartQuantity == 0) {
+      removeCartProduct(productId, userId, 1);
+    } else {
+      await db.rawUpdate(
+          "update Cart set cart_quantity=$cartQuantity where product_id=$productId and user_id=$userId");
+      if (dec) {
+        await db.rawUpdate(
+            "update Product set qty=qty+1 where product_id=$productId");
+      } else {
+        await db.rawUpdate(
+            "update Product set qty=qty-1 where product_id=$productId");
       }
-    }
-    if (kDebugMode) {
-      print(await selectCartData(await getUserId()));
     }
   }
 
-  static selectCartData(String userId) async{
+  static selectCartData(String userId) async {
     var db = await initdatabase();
-    var result = await db.rawQuery("select p.product_id,p.product_name,p.image_path,p.qty,p.price,p.description,c.cart_quantity,u.address from Product p,Users u,Cart c where c.product_id = p.product_id and c.user_id=u.user_id and c.user_id=$userId");
+    var result = await db.rawQuery(
+        "select p.product_id,p.product_name,p.image_path,p.qty,p.price,p.description,c.cart_quantity,u.address from Product p,Users u,Cart c where c.product_id = p.product_id and c.user_id=u.user_id and c.user_id=$userId");
     return result;
   }
 
   //orders
-  static makeOrder(List products,userId,paymentMode,DateTime buyingTime,double total_product_price,double shipping_charge) async{
+  static makeOrder(List products, userId, paymentMode, DateTime buyingTime,
+      double total_product_price, double shipping_charge) async {
     var db = await initdatabase();
-    var orderId = await db.rawInsert("insert into Orders(user_id,payment_mode,buying_time,total_product_price,shipping_charge) values($userId,'$paymentMode','$buyingTime',$total_product_price,$shipping_charge)");
-    for(int i=0;i<products.length;i++){
-      print(products[i]);
+    var orderId = await db.rawInsert(
+        "insert into Orders(user_id,payment_mode,buying_time,total_product_price,shipping_charge) values($userId,'$paymentMode','$buyingTime',$total_product_price,$shipping_charge)");
+    for (int i = 0; i < products.length; i++) {
       var values = {
-        "product_id":products[i]['product_id'],
-        "quantity":products[i]['quantity'],
-        "order_id":orderId
+        "product_id": products[i]['product_id'],
+        "quantity": products[i]['quantity'],
+        "order_id": orderId
       };
-       await db.insert("OrderedProduct", values);
+      await db.insert("OrderedProduct", values);
     }
     return orderId;
-   // print(await db.rawQuery("select p.product_name,op.order_id,op.quantity,o.payment_mode,o.buying_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=$userId"));
-    //await db.rawInsert("insert into OrderDetails(product_id,user_id,quantity)values($productId,$userId,$Quantity)");
   }
 
-  static removeOrder()async{
+  static removeOrder() async {
     var db = await initdatabase();
     db.rawDelete("delete from Orders");
     db.rawDelete("delete from OrderedProduct");
-    print(await db.rawQuery("select * from Orders"));
   }
 
-  static getOrderList() async{
+  static getOrderList() async {
     var db = await initdatabase();
-    var result = await db.rawQuery("select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity,group_concat(p.price) as product_price,o.total_product_price,o.shipping_charge,o.payment_mode,o.buying_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} GROUP by op.order_id ");
-     print(result);
+    var result = await db.rawQuery(
+        "select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity,group_concat(p.price) as product_price,o.total_product_price,o.shipping_charge,o.payment_mode,o.buying_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} GROUP by op.order_id order by op.order_id desc");
     return result;
   }
 
-  static getOrderDetailFromId(orderId) async{
+  static getOrderDetailFromId(orderId) async {
     var db = await initdatabase();
-    var result = await db.rawQuery("select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity, o.payment_mode,o.buying_time,o.order_received_time,o.order_confirm_time,o.out_of_delivery_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} and op.order_id=$orderId GROUP by op.order_id ");
-    print(result);
+    var result = await db.rawQuery(
+        "select op.order_id,group_concat(p.product_name) as product_name,group_concat(p.image_path) as image_path,group_concat(op.quantity) as quantity, o.payment_mode,o.buying_time,o.order_received_time,o.order_confirm_time,o.out_of_delivery_time from Orders o,Product p,OrderedProduct op where op.product_id = p.product_id and op.order_id = o.order_id and user_id=${await getUserId()} and op.order_id=$orderId GROUP by op.order_id ");
     return result;
   }
 
-  static ReceiveOrder(orderId,curruntTime)async{
+  static ReceiveOrder(orderId, curruntTime) async {
     var db = await initdatabase();
-    await db.rawUpdate("update Orders set order_received_time='$curruntTime' where order_id=$orderId");
+    await db.rawUpdate(
+        "update Orders set order_received_time='$curruntTime' where order_id=$orderId");
   }
 
-  static ConfirmOrder(orderId,curruntTime)async{
+  static ConfirmOrder(orderId, curruntTime) async {
     var db = await initdatabase();
-    await db.rawUpdate("update Orders set order_confirm_time='$curruntTime' where order_id=$orderId");
+    await db.rawUpdate(
+        "update Orders set order_confirm_time='$curruntTime' where order_id=$orderId");
   }
 
-  static DeliverOrder(orderId,curruntTime)async{
+  static DeliverOrder(orderId, curruntTime) async {
     var db = await initdatabase();
-    await db.rawUpdate("update Orders set out_of_delivery_time='$curruntTime' where order_id=$orderId");
+    await db.rawUpdate(
+        "update Orders set out_of_delivery_time='$curruntTime' where order_id=$orderId");
   }
-
-   // return productResult;
-
 
 }

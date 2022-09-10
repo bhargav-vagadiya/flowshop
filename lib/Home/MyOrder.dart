@@ -111,7 +111,7 @@ class _MyOrderState extends State<MyOrder> {
         children: [
           Container(
             //height: 230,
-            constraints: const BoxConstraints(maxHeight: 240),
+            constraints: const BoxConstraints(maxHeight: 260),
             child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: itemname.length,
@@ -188,7 +188,7 @@ class _MyOrderState extends State<MyOrder> {
             alignment: Alignment.topCenter,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 210.0),
+                padding: const EdgeInsets.only(top: 200.0),
                 child: Container(
                   decoration: const BoxDecoration(
                       color: creamColor,
@@ -198,7 +198,7 @@ class _MyOrderState extends State<MyOrder> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 100.0),
+                padding: const EdgeInsets.only(top: 50.0),
                 child: Container(
                   decoration: BoxDecoration(
                       color: homeproduct,

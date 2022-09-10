@@ -309,7 +309,7 @@ class _RegisterState extends State<Register> {
                         address.text.trim());
                     
                     if(result==true){
-                      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>Login(changePassword: false)), (route) => false);
+                     Navigator.pop(context);
                     }
                   }
 
