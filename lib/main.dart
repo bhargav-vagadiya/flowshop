@@ -3,10 +3,17 @@ import 'dart:async';
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Splash/Splash.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void main() async{
+  FlutterError.onError = (details){
+    if (kDebugMode) {
+      print("\x1B[33mwidget\x1B[0m");
+      //print(details);
+    }
+  };
   WidgetsFlutterBinding.ensureInitialized();
   var db = await DbHelper.initdatabase();
   DbHelper.getProductDetails(db);

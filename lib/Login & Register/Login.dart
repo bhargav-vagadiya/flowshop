@@ -34,10 +34,22 @@ class _LoginState extends State<Login> {
         resizeToAvoidBottomInset: false,
           body: Stack(
         children: [
+
           Container(
             decoration: const BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(backgroundImage), fit: BoxFit.fill)),
+          ),
+          Positioned(
+            top: 40,
+            left: -25,
+            child: Row(
+              children: [
+                Image.asset("images/icons/Line1.png"),
+                SizedBox(width: 10,),
+                Image.asset("images/icons/RepeatGrid1.png"),
+              ],
+            ),
           ),
           ListView(
            // crossAxisAlignment: CrossAxisAlignment.start,

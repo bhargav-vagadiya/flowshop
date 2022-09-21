@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 //Images
-const splashFlower = "images/splash_flower.webp";
-const backgroundImage = "images/Background.webp";
+const splashFlower = "images/splash_flower.png";
+const backgroundImage = "images/Background.png";
 
 //colors
 const brown = Color(0xff772f00);
@@ -20,8 +20,8 @@ const homeProductBorderColor = Color(0xffd3d0d0);
 
 //icons
 
-const drawerIcon = "images/menu.webp";
-const profileIcon = "images/profile.webp";
+const drawerIcon = "images/menu.png";
+const profileIcon = "images/profile.png";
 
 //curruncy
 const curruncy = "₹";

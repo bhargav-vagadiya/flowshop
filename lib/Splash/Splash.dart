@@ -41,6 +41,17 @@ class _SplashState extends State<Splash> {
         decoration: const BoxDecoration(image: DecorationImage(image: AssetImage(backgroundImage),fit: BoxFit.fill,)),
         child: Stack(
           children: [
+                Positioned(
+                  top: 40,
+                  left: -25,
+                  child: Row(
+                    children: [
+                      Image.asset("images/icons/Line1.png"), 
+                      SizedBox(width: 10,),
+                      Image.asset("images/icons/RepeatGrid1.png"),
+                    ],
+                  ),
+                ),
                 const Padding(
                   padding: EdgeInsets.only(top: 100.0,left: 70),
                   child: Text("We will Deliver\nFragrance at your Home",style: TextStyle(fontSize: 30,color: brown),),

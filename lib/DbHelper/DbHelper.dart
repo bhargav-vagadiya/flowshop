@@ -310,8 +310,13 @@ class DbHelper {
 
   static searchProduct(String searchText) async {
     var db = await initdatabase();
-    var productData = await db.rawQuery(
-        "select * from Product where product_name like '$searchText%'");
+    var productData=[];
+    if(searchText.isNotEmpty) {
+      productData = await db.rawQuery(
+        "select * from Product where product_name like '%$searchText%'");
+    } else {
+      productData.clear();
+    }
     return productData;
   }
 
