@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flowshop/Constants/Constant.dart';
@@ -24,6 +25,9 @@ class _DashboardState extends State<Dashboard> {
   String? username;
 
   List products = [];
+  String? productName,productID,imagePath,description;
+  double? productPrice;
+  int? qty;
 
   getUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,10 +40,14 @@ class _DashboardState extends State<Dashboard> {
     var db = await DbHelper.initdatabase();
     var ProductList = await DbHelper.getProductDetails(db);
     products = ProductList;
-    if (kDebugMode) {
-      print(products);
-    }
+    productName = products[0]['product_name'];
+    productPrice = products[0]['price'];
+    productID=products[0]['id'];
+    imagePath=products[0]['image_path'];
+    qty=products[0]['qty'];
+    description=products[0]['description'];
     setState(() {});
+    return ProductList;
   }
 
   @override
@@ -50,8 +58,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       key: _scafffold,
       drawer: const MyDrawer(),
       backgroundColor: bgcolor,
@@ -125,111 +132,117 @@ class _DashboardState extends State<Dashboard> {
                 right: 8.0,
                 top: 40,
               ),
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0, left: 100),
-                    child: Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          height: 300,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.8),
-                                  blurRadius: 8,
-                                  offset: Offset(5, 5),
-                                )
-                              ],
-                              color: creamColor,
-                              borderRadius: BorderRadius.circular(50)),
-                          child: Row(
-                            children: [
-                              const SizedBox(
-                                width: 120,
-                              ),
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 50.0),
-                                  child: Column(
-                                    crossAxisAlignment:
+              child: FutureBuilder(
+                future: fillProducts(),
+                builder: (context,snapshot){
+                  var result = snapshot.data.toString();
+                  return Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10.0, left: 100),
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                              height: 300,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.8),
+                                      blurRadius: 8,
+                                      offset: Offset(5, 5),
+                                    )
+                                  ],
+                                  color: creamColor,
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 120,
+                                  ),
+                                  Flexible(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 50.0),
+                                      child: Column(
+                                        crossAxisAlignment:
                                         CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${products[0]['product_name']}",
-                                        maxLines: 3,
-                                        softWrap: true,
-                                        style: const TextStyle(
-                                            color: darkbrown,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 23),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(
-                                        height: 30,
-                                      ),
-                                      Text(
-                                        "$curruncy${products[0]['price']}",
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 25),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                      Expanded(child: SizedBox()),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            right: 20.0, bottom: 20),
-                                        child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: InkWell(
-                                              onTap: () async{
-                                               await DbHelper.addProductInCart(products[0]['product_id'], await DbHelper.getUserId(),1);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            Cart()));
-                                              },
-                                              child: Container(
-                                                height: 50,
-                                                width: 50,
-                                                decoration: BoxDecoration(
-                                                    color: darkbrown,
-                                                    borderRadius:
+                                        children: [
+                                          Text(
+                                            "${products[0]['product_name']}",
+                                            maxLines: 3,
+                                            softWrap: true,
+                                            style: const TextStyle(
+                                                color: darkbrown,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 23),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(
+                                            height: 30,
+                                          ),
+                                          Text(
+                                            "$curruncy${productPrice}",
+                                            style: const TextStyle(
+                                                color: Colors.black, fontSize: 25),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          Expanded(child: SizedBox()),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 20.0, bottom: 20),
+                                            child: Align(
+                                              alignment: Alignment.bottomRight,
+                                              child: InkWell(
+                                                  onTap: () async{
+                                                    await DbHelper.addProductInCart(products[0]['id'], await DbHelper.getUserId(),1);
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                Cart()));
+                                                  },
+                                                  child: Container(
+                                                    height: 50,
+                                                    width: 50,
+                                                    decoration: BoxDecoration(
+                                                        color: darkbrown,
+                                                        borderRadius:
                                                         BorderRadius.circular(
                                                             20)),
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: creamColor,
-                                                  size: 50,
-                                                ),
-                                              )),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        )),
-                  ),
-                  Positioned(
-                    left: 5,
-                    top: 50,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        height: 210,
-                        width: 200,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50)),
-                        child: Image.asset("${products[0]['image_path']}",
-                            fit: BoxFit.cover),
+                                                    child: Icon(
+                                                      Icons.add,
+                                                      color: creamColor,
+                                                      size: 50,
+                                                    ),
+                                                  )),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )),
                       ),
-                    ),
-                  )
-                ],
+                      Positioned(
+                        left: 5,
+                        top: 50,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            height: 210,
+                            width: 200,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50)),
+                            child: Image.asset("$imagePath",
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                }
               ),
             ),
             const SizedBox(
@@ -319,5 +332,4 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
     );
-  }
 }
