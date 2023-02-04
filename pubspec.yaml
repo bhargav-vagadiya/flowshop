@@ -30,7 +30,7 @@ dependencies:
   flutter:
     sdk: flutter
   sqflite:
-  fluttertoast:
+  fluttertoast: 8.1.2
   geolocator:
   geocoding: ^2.0.4
   location:
