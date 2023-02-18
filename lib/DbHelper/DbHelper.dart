@@ -310,10 +310,10 @@ class DbHelper {
 
   static searchProduct(String searchText) async {
     var db = await initdatabase();
-    var productData=[];
-    if(searchText.isNotEmpty) {
+    var productData = [];
+    if (searchText.isNotEmpty) {
       productData = await db.rawQuery(
-        "select * from Product where product_name like '%$searchText%'");
+          "select * from Product where product_name like '%$searchText%'");
     } else {
       productData.clear();
     }
@@ -443,5 +443,4 @@ class DbHelper {
     await db.rawUpdate(
         "update Orders set out_of_delivery_time='$curruntTime' where order_id=$orderId");
   }
-
 }

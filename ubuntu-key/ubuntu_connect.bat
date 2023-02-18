@@ -1,0 +1,1 @@
+ssh -i ubuntu.pem azureuser@20.219.59.136
