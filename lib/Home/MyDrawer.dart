@@ -3,6 +3,7 @@ import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/OrderItems.dart';
 import 'package:flowshop/Home/Wishlist.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
+import 'package:flowshop/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,8 +19,9 @@ class _MyDrawerState extends State<MyDrawer> {
 
   getUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var user = userModelFromJson(prefs.getString("user")!);
     setState(() {
-      username = prefs.getString("UserName");
+      username = "${user.firstName} ${user.lastName}";
     });
   }
 
@@ -38,11 +40,15 @@ class _MyDrawerState extends State<MyDrawer> {
           ListTile(
             title: const Text(
               "Welcome,",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             subtitle: Text(
               username.toString(),
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: brown),
+              style: TextStyle(
+                  fontSize: 15, fontWeight: FontWeight.bold, color: brown),
             ),
           ),
           Divider(
@@ -83,10 +89,8 @@ class _MyDrawerState extends State<MyDrawer> {
                     style: TextStyle(color: brown),
                   ),
                   onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OrderItems()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => OrderItems()));
                   },
                 ),
                 ListTile(
@@ -133,7 +137,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   onTap: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.remove("UserName");
+                    prefs.remove("user");
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

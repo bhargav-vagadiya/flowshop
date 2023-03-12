@@ -27,12 +27,11 @@ class _ProductPageState extends State<ProductPage> {
   bool isfavorite = false;
   int count = 1;
 
-  favoriteOrNot() async{
-    isfavorite = await DbHelper.productInWishlist(widget.product_id, await DbHelper.getUserId());
+  favoriteOrNot() async {
+    // isfavorite = await DbHelper.productInWishlist(
+    //     widget.product_id, await DbHelper.getUserId());
     print(isfavorite);
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -40,9 +39,7 @@ class _ProductPageState extends State<ProductPage> {
     // TODO: implement initState
     super.initState();
     favoriteOrNot();
-
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +55,8 @@ class _ProductPageState extends State<ProductPage> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Cart()));
                 //Navigator.pop(context);
               },
               icon: Image.asset("images/icons/md-cart.webp"))
@@ -122,22 +120,42 @@ class _ProductPageState extends State<ProductPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Price",style: TextStyle(color: brown,fontWeight: FontWeight.bold,fontSize: 18),),
-                                  Text("$curruncy${widget.price}",style: TextStyle(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w400),)
+                                  const Text(
+                                    "Price",
+                                    style: TextStyle(
+                                        color: brown,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                  Text(
+                                    "$curruncy${widget.price}",
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400),
+                                  )
                                 ],
                               ),
                             ),
                             Align(
                                 alignment: Alignment.centerRight,
                                 child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(minimumSize: Size(200, 60)),
-                                    onPressed: () async{
+                                    style: ElevatedButton.styleFrom(
+                                        minimumSize: Size(200, 60)),
+                                    onPressed: () async {
                                       print(count);
-                                     await DbHelper.addProductInCart(widget.product_id,await DbHelper.getUserId(),count);
-                                     print(await DbHelper.selectCartData(await DbHelper.getUserId()));
-                                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Cart()));
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "currently you can't add product to cart due to maintainance");
+                                      //  await DbHelper.addProductInCart(widget.product_id,await DbHelper.getUserId(),count);
+                                      //  print(await DbHelper.selectCartData(await DbHelper.getUserId()));
+                                      //  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Cart()));
                                     },
-                                    child: const Text("Add to Cart",style: TextStyle(fontSize: 25,color: creamColor),))),
+                                    child: const Text(
+                                      "Add to Cart",
+                                      style: TextStyle(
+                                          fontSize: 25, color: creamColor),
+                                    ))),
                           ],
                         ),
                       ),
@@ -164,20 +182,20 @@ class _ProductPageState extends State<ProductPage> {
             child: Column(
               children: [
                 InkWell(
-                  onTap: () async{
+                  onTap: () async {
                     var userid = await DbHelper.getUserId();
-                    if(await DbHelper.productInWishlist(widget.product_id,userid)){
-                     var removed = await DbHelper.removeWishlistByUser(widget.product_id, userid);
-                     if(removed){
-                       isfavorite=false;
-                     }
-                    }else{
+                    if (await DbHelper.productInWishlist(
+                        widget.product_id, userid)) {
+                      var removed = await DbHelper.removeWishlistByUser(
+                          widget.product_id, userid);
+                      if (removed) {
+                        isfavorite = false;
+                      }
+                    } else {
                       await DbHelper.addWishlist(widget.product_id, userid);
-                      isfavorite=true;
+                      isfavorite = true;
                     }
-                    setState(() {
-
-                    });
+                    setState(() {});
                   },
                   child: Container(
                       height: 38,
@@ -204,15 +222,16 @@ class _ProductPageState extends State<ProductPage> {
                   height: 100,
                   width: 25,
                   decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(const Radius.circular(5)),
+                      borderRadius:
+                          const BorderRadius.all(const Radius.circular(5)),
                       border: Border.all(color: const Color(0xffb7a361))),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           setState(() {
-                            if(count<5) {
+                            if (count < 5) {
                               count++;
                             }
                           });
@@ -221,17 +240,30 @@ class _ProductPageState extends State<ProductPage> {
                           color: const Color(0xffb7a361),
                           width: 25,
                           child: const Center(
-                          child: Icon(Icons.add_sharp,color: darkbrown,size: 25,)),
+                              child: Icon(
+                            Icons.add_sharp,
+                            color: darkbrown,
+                            size: 25,
+                          )),
                         ),
                       ),
-                      const SizedBox(height: 15,),
-                      Center(child: Text("$count",style: TextStyle(color: darkbrown,fontWeight: FontWeight.bold),)),
-                      const SizedBox(height: 15,),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Center(
+                          child: Text(
+                        "$count",
+                        style: TextStyle(
+                            color: darkbrown, fontWeight: FontWeight.bold),
+                      )),
+                      const SizedBox(
+                        height: 15,
+                      ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             setState(() {
-                              if(count>1) {
+                              if (count > 1) {
                                 count--;
                               }
                             });
@@ -240,7 +272,10 @@ class _ProductPageState extends State<ProductPage> {
                             color: const Color(0xffb7a361),
                             width: 25,
                             child: const Center(
-                            child: Icon(Icons.remove,color: darkbrown,)),
+                                child: Icon(
+                              Icons.remove,
+                              color: darkbrown,
+                            )),
                           ),
                         ),
                       )

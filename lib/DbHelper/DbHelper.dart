@@ -91,6 +91,11 @@ class DbHelper {
         // TODO
       }
       await db.execute("DROP TABLE IF EXISTS Cart");
+
+
+
+
+
       await db.execute("""Create table Cart(
                     cart_id integer primary key autoincrement,
                     product_id integer,
@@ -98,6 +103,10 @@ class DbHelper {
                     cart_quantity integer,
                     foreign key(product_id) references Product(product_id),
                     foreign key(user_id) references Users(user_id))""");
+
+
+
+
       await db.execute("DROP TABLE IF EXISTS Orders");
       await db.execute("""Create table Orders(
                     order_id integer primary key autoincrement,
@@ -146,7 +155,8 @@ class DbHelper {
     if (result.isEmpty) {
       try {
         await db.execute(
-            "insert into Users(first_name,last_name,mobile_number,address,password) values('$firstName','$lastName','$mobileNumber','$address','$password')");
+            """insert into Users(first_name,last_name,mobile_number,address,password) 
+            values('$firstName','$lastName','$mobileNumber','$address','$password')""");
         Fluttertoast.showToast(msg: "Registration Successful");
         return true;
       } on Exception catch (e) {
@@ -209,7 +219,7 @@ class DbHelper {
       return false;
     }
   }
-
+  // login user
   static checkUser(Database db, String username, String password) async {
     try {
       List<Map<String, Object?>> result = await db.rawQuery(
