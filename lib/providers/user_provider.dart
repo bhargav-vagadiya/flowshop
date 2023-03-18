@@ -45,7 +45,6 @@ class UserProvider extends ChangeNotifier {
     loading = false;
     notifyListeners();
     if (result == null) {
-      Fluttertoast.showToast(msg: "Please try after some time");
       return false;
     } else {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -64,17 +63,52 @@ class UserProvider extends ChangeNotifier {
       return false;
     } else if (result == null) {
       Fluttertoast.showToast(msg: "Please try after some time");
-      return false;
+      return true;
     } else {
       Fluttertoast.showToast(msg: "User already exists");
       return true;
     }
   }
 
-  void updateUser(
-      {String? firstName,
-      String? lastName,
-      String? address,
-      String? email,
-      String? password}) {}
+  Future<bool> updateUser({required UserModel userModel}) async {
+    loading = true;
+    notifyListeners();
+    var result = await UserHandler.updateUser(userModel: userModel);
+    loading = false;
+    notifyListeners();
+    if (result is UserModel) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      await preferences.setString("user", result.toString());
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> updateUserPassword(
+      {required String oldPassword, required String newPassword}) async {
+    loading = true;
+    notifyListeners();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String data = preferences.getString("user")!;
+    UserModel userData = userModelFromJson(data);
+    if (userData.password == oldPassword) {
+      var result =
+          await UserHandler.updateUserPassword(newPassword: newPassword);
+      loading = false;
+      notifyListeners();
+      if (result is UserModel) {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        await preferences.setString("user", result.toString());
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      loading = false;
+      notifyListeners();
+      Fluttertoast.showToast(msg: "Old password is incorrect");
+      return false;
+    }
+  }
 }

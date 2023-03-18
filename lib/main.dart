@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Splash/Splash.dart';
+import 'package:flowshop/providers/product_provider.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ void main() async {
   FlutterError.onError = (details) {
     if (kDebugMode) {
       print("\x1B[33mwidget\x1B[0m");
-      //print(details);
+      print(details);
     }
   };
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
+      ],
       child: ScreenUtilInit(
           builder: (BuildContext context, Widget? child) {
             return GetMaterialApp(

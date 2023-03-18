@@ -10,6 +10,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart' as loc;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 // ignore: must_be_immutable
@@ -36,12 +37,15 @@ class _UserDetailsState extends State<UserDetails> {
   TextEditingController confirmPassword = TextEditingController();
 
   getUserData() async {
-    var db = await DbHelper.initdatabase();
-    Map result = await DbHelper.getUserData(db);
-    phone.text = result['mobile_number'];
-    firstname.text = result['first_name'];
-    lastname.text = result['last_name'];
-    address.text = result['address'];
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String data = preferences.getString("user")!;
+    UserModel userData = userModelFromJson(data);
+    phone.text = userData.phone;
+    firstname.text = userData.firstName;
+    lastname.text = userData.lastName;
+    address.text = userData.address;
+    email.text = userData.email;
+    password.text = userData.password;
   }
 
   @override
@@ -70,11 +74,11 @@ class _UserDetailsState extends State<UserDetails> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.arrow_back_ios_new,
                       color: darkbrown,
                     ),
-                    Text(
+                    const Text(
                       "Back",
                       style: TextStyle(
                           color: darkbrown, fontWeight: FontWeight.bold),
@@ -107,7 +111,7 @@ class _UserDetailsState extends State<UserDetails> {
               ListView(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(top: 40.0, left: 40),
+                    padding: const EdgeInsets.only(top: 40.0, left: 40),
                     child: Text(
                       widget.update ? "Update Profile" : "Enter Your Details",
                       style: const TextStyle(
@@ -355,24 +359,27 @@ class _UserDetailsState extends State<UserDetails> {
                           }
                         }
                       } else {
-                        Database db = await DbHelper.initdatabase();
-                        bool result = await DbHelper.updateUserData(
-                            db,
-                            phone.text.trim(),
-                            firstname.text.trim(),
-                            lastname.text.trim(),
-                            address.text.trim());
+                        bool result = await context
+                            .read<UserProvider>()
+                            .updateUser(
+                                userModel: UserModel(
+                                    firstName: firstname.text.trim(),
+                                    lastName: lastname.text.trim(),
+                                    phone: phone.text.trim(),
+                                    address: address.text.trim(),
+                                    password: password.text.trim(),
+                                    email: email.text.trim()));
 
-                        if (result == true) {
+                        if (result == true && mounted) {
                           Navigator.pop(context);
                         }
                       }
                     },
                     child: context.watch<UserProvider>().loading
-                        ? CircularProgressIndicator()
+                        ? const CircularProgressIndicator()
                         : Text(
                             widget.update ? "Update" : "Sign in",
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xffe9c858)),

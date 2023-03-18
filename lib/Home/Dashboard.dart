@@ -8,10 +8,13 @@ import 'package:flowshop/Home/MyDrawer.dart';
 import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flowshop/Home/Search.dart';
 import 'package:flowshop/Login%20&%20Register/user_details.dart';
+import 'package:flowshop/models/product_model.dart';
+import 'package:flowshop/providers/product_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
@@ -47,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
     imagePath = products[0]['image_path'];
     qty = products[0]['qty'];
     description = products[0]['description'];
-    setState(() {});
+    // setState(() {});
     return ProductList;
   }
 
@@ -74,13 +77,13 @@ class _DashboardState extends State<Dashboard> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Fluttertoast.showToast(msg: "Feature under development");
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => UserDetails(
-                  //               update: true,
-                  //             )));
+                  // Fluttertoast.showToast(msg: "Feature under development");
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => UserDetails(
+                                update: true,
+                              )));
                 },
                 icon: Image.asset(profileIcon))
           ],
@@ -99,10 +102,9 @@ class _DashboardState extends State<Dashboard> {
                     Get.to(const Search(), transition: Transition.fadeIn);
                   },
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: homeproduct,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10))),
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
                     width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.only(left: 8.0, right: 5),
                     height: 40,
@@ -134,131 +136,147 @@ class _DashboardState extends State<Dashboard> {
                   right: 8.0,
                   top: 40,
                 ),
-                child: FutureBuilder(
-                    future: fillProducts(),
+                child: FutureBuilder<List<ProductModel>?>(
+                    future: context.read<ProductProvider>().getProducts(),
                     builder: (context, snapshot) {
-                      var result = snapshot.data.toString();
-                      return Stack(
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(right: 10.0, left: 100),
-                            child: Align(
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  height: 300,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.8),
-                                          blurRadius: 8,
-                                          offset: Offset(5, 5),
+                      if (snapshot.hasData) {
+                        var result = snapshot.data!;
+                        return Stack(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 10.0, left: 100),
+                              child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: Container(
+                                    height: 300,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.8),
+                                            blurRadius: 8,
+                                            offset: const Offset(5, 5),
+                                          )
+                                        ],
+                                        color: creamColor,
+                                        borderRadius:
+                                            BorderRadius.circular(50)),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 120,
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 50.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${result[0].name}",
+                                                  maxLines: 3,
+                                                  softWrap: true,
+                                                  style: const TextStyle(
+                                                      color: darkbrown,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 23),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(
+                                                  height: 30,
+                                                ),
+                                                Text(
+                                                  "$curruncy${result[0].price}",
+                                                  style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 25),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                const Expanded(
+                                                    child: SizedBox()),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 20.0,
+                                                          bottom: 20),
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.bottomRight,
+                                                    child: InkWell(
+                                                        onTap: () async {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  "currently you can't add product to cart due to maintainance");
+                                                          // await DbHelper
+                                                          //     .addProductInCart(
+                                                          //         products[0]
+                                                          //             ['id'],
+                                                          //         await DbHelper
+                                                          //             .getUserId(),
+                                                          //         1);
+                                                          // Navigator.push(
+                                                          //     context,
+                                                          //     MaterialPageRoute(
+                                                          //         builder:
+                                                          //             (context) =>
+                                                          //                 Cart()));
+                                                        },
+                                                        child: Container(
+                                                          height: 50,
+                                                          width: 50,
+                                                          decoration: BoxDecoration(
+                                                              color: darkbrown,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                          child: const Icon(
+                                                            Icons.add,
+                                                            color: creamColor,
+                                                            size: 50,
+                                                          ),
+                                                        )),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                         )
                                       ],
-                                      color: creamColor,
-                                      borderRadius: BorderRadius.circular(50)),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 120,
-                                      ),
-                                      Flexible(
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 50.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "${products[0]['product_name']}",
-                                                maxLines: 3,
-                                                softWrap: true,
-                                                style: const TextStyle(
-                                                    color: darkbrown,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 23),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              const SizedBox(
-                                                height: 30,
-                                              ),
-                                              Text(
-                                                "$curruncy${productPrice}",
-                                                style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 25),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                              Expanded(child: SizedBox()),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 20.0, bottom: 20),
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.bottomRight,
-                                                  child: InkWell(
-                                                      onTap: () async {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "currently you can't add product to cart due to maintainance");
-                                                        // await DbHelper
-                                                        //     .addProductInCart(
-                                                        //         products[0]
-                                                        //             ['id'],
-                                                        //         await DbHelper
-                                                        //             .getUserId(),
-                                                        //         1);
-                                                        // Navigator.push(
-                                                        //     context,
-                                                        //     MaterialPageRoute(
-                                                        //         builder:
-                                                        //             (context) =>
-                                                        //                 Cart()));
-                                                      },
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 50,
-                                                        decoration: BoxDecoration(
-                                                            color: darkbrown,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                        child: Icon(
-                                                          Icons.add,
-                                                          color: creamColor,
-                                                          size: 50,
-                                                        ),
-                                                      )),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )),
-                          ),
-                          Positioned(
-                            left: 5,
-                            top: 50,
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                height: 210,
-                                width: 200,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50)),
-                                child: Image.asset("$imagePath",
-                                    fit: BoxFit.cover),
-                              ),
+                                    ),
+                                  )),
                             ),
-                          )
-                        ],
-                      );
+                            Positioned(
+                              left: 5,
+                              top: 50,
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  height: 210,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50)),
+                                  child: Image.asset("$imagePath",
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      } else {
+                        return context.read<ProductProvider>().loading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : Center(
+                                child: Text("Could not get peroducts."),
+                              );
+                      }
                     }),
               ),
               const SizedBox(
@@ -266,82 +284,102 @@ class _DashboardState extends State<Dashboard> {
               ),
               SizedBox(
                 height: 180,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: products.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.to(ProductPage(
-                              product_id: products[index]['product_id'],
-                              product_name: products[index]['product_name'],
-                              image_path: products[index]['image_path'],
-                              qty: products[index]['qty'],
-                              price: products[index]['price'],
-                              description: products[index]['description'],
-                            ));
-                          },
-                          child: Stack(children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
-                              child: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20),
-                                  height: 120,
-                                  width: 145,
-                                  decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.8),
-                                          blurRadius: 6,
-                                          offset: Offset(3, 2),
-                                        )
-                                      ],
-                                      color: homeproduct,
-                                      border: Border.all(
-                                          color: homeProductBorderColor),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 80,
+                child: FutureBuilder<List<ProductModel>?>(
+                    future: context.read<ProductProvider>().getProducts(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var result = snapshot.data!;
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: result.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.to(ProductPage(
+                                      product_id: result[index].id,
+                                      product_name: result[index].name,
+                                      image_path:
+                                          "images/products/product1.webp",
+                                      qty: result[index].quantity,
+                                      price: result[index].price,
+                                      description: result[index].description,
+                                    ));
+                                  },
+                                  child: Stack(children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                          padding: const EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          height: 120,
+                                          width: 145,
+                                          decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.8),
+                                                  blurRadius: 6,
+                                                  offset: const Offset(3, 2),
+                                                )
+                                              ],
+                                              color: homeproduct,
+                                              border: Border.all(
+                                                  color:
+                                                      homeProductBorderColor),
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(
+                                                height: 80,
+                                              ),
+                                              Expanded(
+                                                  child: Text(
+                                                "${result[index].name}",
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.start,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ))
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      Expanded(
-                                          child: Text(
-                                        "${products[index]['product_name']}",
-                                        style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12),
-                                        textAlign: TextAlign.start,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ))
-                                    ],
-                                  ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 30.0),
+                                      child: Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Container(
+                                          height: 120,
+                                          width: 150,
+                                          child: Image.asset(
+                                              "images/products/product1.webp"),
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 30.0),
-                              child: Align(
-                                alignment: Alignment.topCenter,
-                                child: Container(
-                                  height: 120,
-                                  width: 150,
-                                  child: Image.asset(
-                                      "${products[index]['image_path']}"),
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
-                      );
+                              );
+                            });
+                      } else {
+                        return context.read<ProductProvider>().loading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : Center(
+                                child: Text("Could not get peroducts."),
+                              );
+                      }
                     }),
               )
             ],

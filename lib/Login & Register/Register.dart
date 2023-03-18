@@ -132,7 +132,7 @@ class _RegisterState extends State<Register> {
                       bool status = await context
                           .read<UserProvider>()
                           .checkUserIsRegistered(phone: phoneController.text);
-                      if (!status && mounted) {
+                      if (status == false && mounted) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

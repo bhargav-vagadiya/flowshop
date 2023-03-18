@@ -253,27 +253,25 @@ class _LoginState extends State<Login> {
                             password.text.trim()) {
                           Fluttertoast.showToast(msg: "Password didn't match");
                         } else {
-                          setState(() {
-                            process = true;
-                          });
-                          var database = await DbHelper.initdatabase();
-                          bool result = await DbHelper.changeUserPassword(
-                              database,
-                              oldPassword.text.trim(),
-                              newPassword.text.trim());
-                          setState(() {
-                            process = false;
-                          });
+                          bool result = await context
+                              .read<UserProvider>()
+                              .updateUserPassword(
+                                  oldPassword: oldPassword.text.trim(),
+                                  newPassword: newPassword.text.trim());
+
                           if (kDebugMode) {
                             print(result);
                           }
                           if (result) {
                             if (!widget.changePassword) {
                               TextInput.finishAutofillContext(shouldSave: true);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dashboard()));
+                              if (mounted) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Dashboard()));
+                              }
                             } else {
                               Navigator.pop(context);
                             }
@@ -282,13 +280,13 @@ class _LoginState extends State<Login> {
                       }
                     },
                     child: context.watch<UserProvider>().loading
-                        ? CircularProgressIndicator()
+                        ? const CircularProgressIndicator()
                         : Text(
                             widget.changePassword ? "Change Password" : "Login",
                             style: TextStyle(
                                 fontSize: 25.sp,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffe9c858)),
+                                color: const Color(0xffe9c858)),
                           ),
                   )),
                   const SizedBox(
