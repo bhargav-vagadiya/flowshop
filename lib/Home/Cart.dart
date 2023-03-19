@@ -156,7 +156,7 @@ class _CartState extends State<Cart> {
                                               height: 10,
                                             ),
                                             Text(
-                                              "$curruncy${item![index].product.price * item![index].product.quantity}",
+                                              "$curruncy${item![index].product.price * item![index].cartQuantity}",
                                               maxLines: 2,
                                               softWrap: true,
                                               overflow: TextOverflow.ellipsis,
