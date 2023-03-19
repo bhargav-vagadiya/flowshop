@@ -4,58 +4,56 @@
 
 import 'dart:convert';
 
-List<ProductModel> productModelFromJson(String str) => List<ProductModel>.from(json.decode(str).map((x) => ProductModel.fromJson(x)));
+List<ProductModel> productModelFromJson(String str) => List<ProductModel>.from(
+    json.decode(str).map((x) => ProductModel.fromJson(x)));
 
-String productModelToJson(List<ProductModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String productModelToJson(List<ProductModel> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class ProductModel {
-    ProductModel({
-        required this.id,
-        required this.name,
-        required this.flowerType,
-        required this.quantity,
-        required this.price,
-        this.rating,
-        required this.description,
-        required this.sellerId,
-        required this.createdAt,
-        required this.updatedAt,
-    });
+  ProductModel({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.flowerType,
+    required this.quantity,
+    required this.price,
+    required this.sellerId,
+    this.rating,
+    required this.image,
+  });
 
-    final int id;
-    final String name;
-    final String flowerType;
-    final int quantity;
-    final double price;
-    final dynamic rating;
-    final String description;
-    final int sellerId;
-    final DateTime createdAt;
-    final DateTime updatedAt;
+  final int id;
+  final String name;
+  final String description;
+  final String flowerType;
+  final int quantity;
+  final double price;
+  final int sellerId;
+  final dynamic rating;
+  final String image;
 
-    factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
+  factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
         id: json["id"],
         name: json["name"],
+        description: json["description"],
         flowerType: json["flower_type"],
         quantity: json["quantity"],
         price: json["price"],
-        rating: json["rating"],
-        description: json["description"],
         sellerId: json["seller_id"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-    );
+        rating: json["rating"],
+        image: json["image"],
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
+        "description": description,
         "flower_type": flowerType,
         "quantity": quantity,
         "price": price,
-        "rating": rating,
-        "description": description,
         "seller_id": sellerId,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-    };
+        "rating": rating,
+        "image": image,
+      };
 }

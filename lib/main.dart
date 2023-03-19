@@ -6,6 +6,7 @@ import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Splash/Splash.dart';
 import 'package:flowshop/providers/product_provider.dart';
 import 'package:flowshop/providers/user_provider.dart';
+import 'package:flowshop/providers/wishlist_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
+        ChangeNotifierProvider(create: (context) => WishListProvider()),
       ],
       child: ScreenUtilInit(
           builder: (BuildContext context, Widget? child) {

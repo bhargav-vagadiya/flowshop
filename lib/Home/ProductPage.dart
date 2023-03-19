@@ -1,8 +1,10 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Home/Cart.dart';
+import 'package:flowshop/providers/wishlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
   String? product_name, image_path, description;
@@ -30,6 +32,9 @@ class _ProductPageState extends State<ProductPage> {
   favoriteOrNot() async {
     // isfavorite = await DbHelper.productInWishlist(
     //     widget.product_id, await DbHelper.getUserId());
+    isfavorite = await context
+        .read<WishListProvider>()
+        .productInWishlist(productId: widget.product_id!);
     print(isfavorite);
     setState(() {});
   }
@@ -171,7 +176,7 @@ class _ProductPageState extends State<ProductPage> {
                 image: DecorationImage(
                     image:
                         //NetworkImage("https://img.teleflora.com/images/o_0/l_flowers:TEV58-7C,pg_6/w_368,h_460,cs_no_cmyk,c_pad/f_jpg,q_auto:eco,e_sharpen:200/flowers/TEV58-7C/Teleflora'sMidModBrightsBouquetPM?image=9"),
-                        AssetImage("${widget.image_path}"),
+                        NetworkImage("${widget.image_path}"),
                     fit: BoxFit.contain)),
           ),
           Padding(
@@ -183,17 +188,21 @@ class _ProductPageState extends State<ProductPage> {
               children: [
                 InkWell(
                   onTap: () async {
-                    var userid = await DbHelper.getUserId();
-                    if (await DbHelper.productInWishlist(
-                        widget.product_id, userid)) {
-                      var removed = await DbHelper.removeWishlistByUser(
-                          widget.product_id, userid);
+                    if (await context
+                        .read<WishListProvider>()
+                        .productInWishlist(productId: widget.product_id!)) {
+                      var removed = true;
                       if (removed) {
                         isfavorite = false;
                       }
                     } else {
-                      await DbHelper.addWishlist(widget.product_id, userid);
-                      isfavorite = true;
+                      // await DbHelper.addWishlist(widget.product_id, userid);
+                      var result = await context
+                          .read<WishListProvider>()
+                          .addProductInWidhList(productId: widget.product_id!);
+                      if (result) {
+                        isfavorite = true;
+                      }
                     }
                     setState(() {});
                   },
