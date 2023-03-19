@@ -301,7 +301,7 @@ class _DashboardState extends State<Dashboard> {
                                     Get.to(ProductPage(
                                       product_id: result[index].id,
                                       product_name: result[index].name,
-                                      image_path: result[index].image,
+                                      image_path: result[index].imageUrl,
                                       qty: result[index].quantity,
                                       price: result[index].price,
                                       description: result[index].description,
@@ -362,7 +362,7 @@ class _DashboardState extends State<Dashboard> {
                                           height: 120,
                                           width: 150,
                                           child: Image.network(
-                                              result[index].image),
+                                              result[index].imageUrl),
                                         ),
                                       ),
                                     ),

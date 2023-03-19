@@ -2,9 +2,12 @@ import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Home/MyOrder.dart';
 import 'package:flowshop/Home/ProductPage.dart';
+import 'package:flowshop/models/cart_model.dart';
+import 'package:flowshop/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -14,27 +17,29 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
-  List item = [];
+  List<CartModel>? item = [];
   List count = [];
-  num subtotal=0;
+  num subtotal = 0;
 
   getcartItem() async {
-    item = await DbHelper.selectCartData(await DbHelper.getUserId());
-    setState(() {});
-    for (int i = 0; i < item.length; i++) {
-      count.add(item[i]['cart_quantity']);
+    item = await context.read<CartProvider>().getCart();
+    if (item != null && item!.isNotEmpty) {
+      setState(() {});
+      for (int i = 0; i < item!.length; i++) {
+        count.add(item![i].cartQuantity);
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
-  getCartItemWithQuantity() async{
+  getCartItemWithQuantity() async {
     await getcartItem();
-    for (int i = 0; i < item.length; i++) {
-      subtotal+=(item[i]['price']*item[i]['cart_quantity']);
+    if (item != null && item!.isNotEmpty) {
+      for (int i = 0; i < item!.length; i++) {
+        subtotal += (item![i].product.price * item![i].cartQuantity);
+      }
+      setState(() {});
     }
-    setState(() {
-
-    });
   }
 
   @override
@@ -63,7 +68,7 @@ class _CartState extends State<Cart> {
       body: Stack(
         children: [
           Visibility(
-              visible: item.isEmpty,
+              visible: item != null || item!.isEmpty,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -87,24 +92,24 @@ class _CartState extends State<Cart> {
                 ),
               )),
           Visibility(
-            visible: item.isNotEmpty,
+            visible: item != null && item!.isNotEmpty,
             child: Column(
               children: [
                 Container(
                   constraints: const BoxConstraints(maxHeight: 375),
                   child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: item.length,
+                      itemCount: item!.length,
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(
                           onTap: () {
                             Get.to(ProductPage(
-                              product_id: item[index]['product_id'],
-                              product_name: item[index]['product_name'],
-                              image_path: item[index]['image_path'],
-                              qty: item[index]['qty'],
-                              price: item[index]['price'],
-                              description: item[index]['description'],
+                              product_id: item![index].product.id,
+                              product_name: item![index].product.name,
+                              image_path: item![index].product.imageUrl,
+                              qty: item![index].product.quantity,
+                              price: item![index].product.price,
+                              description: item![index].product.description,
                             ));
                           },
                           child: Stack(
@@ -131,8 +136,8 @@ class _CartState extends State<Cart> {
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                                 image: DecorationImage(
-                                                    image: AssetImage(
-                                                        "${item[index]['image_path']}")))),
+                                                    image: NetworkImage(
+                                                        "${item![index].product.imageUrl}")))),
                                       ),
                                       Expanded(
                                         child: Column(
@@ -142,22 +147,24 @@ class _CartState extends State<Cart> {
                                               MainAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "${item[index]['product_name']}",
+                                              "${item![index].product.name}",
                                               style: const TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            SizedBox(height: 10,),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
                                             Text(
-                                              "$curruncy${item[index]['price']*item[index]['cart_quantity']}",
+                                              "$curruncy${item![index].product.price * item![index].product.quantity}",
                                               maxLines: 2,
                                               softWrap: true,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             //Expanded(child: Text("${item[index]['description']}"))
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top:8.0,right: 15.0),
+                                              padding: const EdgeInsets.only(
+                                                  top: 8.0, right: 15.0),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
@@ -166,16 +173,17 @@ class _CartState extends State<Cart> {
                                                       onTap: () async {
                                                         count[index]--;
                                                         setState(() {});
-                                                        await DbHelper
-                                                            .changeCartQuantity(
-                                                                item[index][
-                                                                    'product_id'],
-                                                                await DbHelper
-                                                                    .getUserId(),
-                                                                count[index],
-                                                                true);
-                                                        subtotal-=item[index]['price'];
-                                                        getcartItem();
+                                                        // await DbHelper
+                                                        //     .changeCartQuantity(
+                                                        //         item[index][
+                                                        //             'product_id'],
+                                                        //         await DbHelper
+                                                        //             .getUserId(),
+                                                        //         count[index],
+                                                        //         true);
+                                                        // subtotal -= item[index]
+                                                        //     ['price'];
+                                                        // getcartItem();
                                                       },
                                                       child: Container(
                                                         width: 25,
@@ -193,20 +201,22 @@ class _CartState extends State<Cart> {
                                                   ),
                                                   GestureDetector(
                                                       onTap: () async {
-                                                        if (count[index] < 5) {
-                                                          count[index]++;
-                                                          setState(() {});
-                                                          await DbHelper
-                                                              .changeCartQuantity(
-                                                                  item[index][
-                                                                      'product_id'],
-                                                                  await DbHelper
-                                                                      .getUserId(),
-                                                                  count[index],
-                                                                  false);
-                                                          subtotal+=item[index]['price'];
-                                                          getcartItem();
-                                                        }
+                                                        // if (count[index] < 5) {
+                                                        //   count[index]++;
+                                                        //   setState(() {});
+                                                        //   await DbHelper
+                                                        //       .changeCartQuantity(
+                                                        //           item[index][
+                                                        //               'product_id'],
+                                                        //           await DbHelper
+                                                        //               .getUserId(),
+                                                        //           count[index],
+                                                        //           false);
+                                                        //   subtotal +=
+                                                        //       item[index]
+                                                        //           ['price'];
+                                                        //   getcartItem();
+                                                        // }
                                                       },
                                                       child: Container(
                                                         width: 25,
@@ -229,10 +239,11 @@ class _CartState extends State<Cart> {
                                   right: 15,
                                   child: GestureDetector(
                                     onTap: () async {
-                                      await DbHelper.removeCartProduct(
-                                          item[index]['product_id'],
-                                          await DbHelper.getUserId(),count[index]);
-                                      getcartItem();
+                                      // await DbHelper.removeCartProduct(
+                                      //     item[index]['product_id'],
+                                      //     await DbHelper.getUserId(),
+                                      //     count[index]);
+                                      // getcartItem();
                                     },
                                     child: Container(
                                       height: 17,
@@ -271,9 +282,16 @@ class _CartState extends State<Cart> {
                         child: Stack(children: [
                           Text(
                             "Sub Total",
-                            style: TextStyle(color: darkbrown,fontSize: 20),
+                            style: TextStyle(color: darkbrown, fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("$curruncy${subtotal.toDouble()}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                              "$curruncy${subtotal.toDouble()}",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          )
                         ]),
                       ),
                       Padding(
@@ -281,24 +299,39 @@ class _CartState extends State<Cart> {
                         child: Stack(children: [
                           Text(
                             "Shipping Charge",
-                            style: TextStyle(color: darkbrown,fontSize: 20),
+                            style: TextStyle(color: darkbrown, fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("${curruncy}10.0",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
-
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                              "${curruncy}10.0",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          )
                         ]),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 16.0,right: 16),
-                        child: Divider(thickness: 2,),
+                        padding: const EdgeInsets.only(left: 16.0, right: 16),
+                        child: Divider(
+                          thickness: 2,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Stack(children: [
                           Text(
                             "Bag Total",
-                            style: TextStyle(color: darkbrown,fontSize: 20),
+                            style: TextStyle(color: darkbrown, fontSize: 20),
                           ),
-                          Align(alignment: Alignment.topRight,child: Text("$curruncy${subtotal+10.00}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),)
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Text(
+                              "$curruncy${subtotal + 10.00}",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          )
                         ]),
                       ),
                       const Expanded(child: SizedBox()),
@@ -306,29 +339,34 @@ class _CartState extends State<Cart> {
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                           onPressed: () async {
-                            getcartItem();
-                            List products = [];
-                            String result = "";
-                            for (int i = 0; i < item.length; i++) {
-                              var productId = item[i]['product_id'];
-                              var quantity = item[i]['cart_quantity'];
-                              Map product = {
-                                "product_id": productId,
-                                "quantity": quantity
-                              };
-                              products.add(product);
-                            }
-                            print(products);
-                            var orderId = await DbHelper.makeOrder(
-                                products,
-                                await DbHelper.getUserId(),
-                                "Cash",
-                                DateTime.now(),
-                                subtotal.toDouble(),
-                                10.00);
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyOrder(orderId: orderId,)));
-                            DbHelper.removeCartData(await DbHelper.getUserId());
-                            getcartItem();
+                            // getcartItem();
+                            // List products = [];
+                            // String result = "";
+                            // for (int i = 0; i < item.length; i++) {
+                            //   var productId = item[i]['product_id'];
+                            //   var quantity = item[i]['cart_quantity'];
+                            //   Map product = {
+                            //     "product_id": productId,
+                            //     "quantity": quantity
+                            //   };
+                            //   products.add(product);
+                            // }
+                            // print(products);
+                            // var orderId = await DbHelper.makeOrder(
+                            //     products,
+                            //     await DbHelper.getUserId(),
+                            //     "Cash",
+                            //     DateTime.now(),
+                            //     subtotal.toDouble(),
+                            //     10.00);
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => MyOrder(
+                            //               orderId: orderId,
+                            //             )));
+                            // DbHelper.removeCartData(await DbHelper.getUserId());
+                            // getcartItem();
                           },
                           style: ElevatedButton.styleFrom(
                               minimumSize:

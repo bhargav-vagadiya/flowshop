@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Splash/Splash.dart';
+import 'package:flowshop/providers/cart_provider.dart';
 import 'package:flowshop/providers/product_provider.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flowshop/providers/wishlist_provider.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => WishListProvider()),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
       ],
       child: ScreenUtilInit(
           builder: (BuildContext context, Widget? child) {

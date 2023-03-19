@@ -1,6 +1,7 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Home/Cart.dart';
+import 'package:flowshop/providers/cart_provider.dart';
 import 'package:flowshop/providers/wishlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -149,12 +150,19 @@ class _ProductPageState extends State<ProductPage> {
                                         minimumSize: Size(200, 60)),
                                     onPressed: () async {
                                       print(count);
-                                      Fluttertoast.showToast(
-                                          msg:
-                                              "currently you can't add product to cart due to maintainance");
+                                      // Fluttertoast.showToast(
+                                      //     msg:
+                                      //         "currently you can't add product to cart due to maintainance");
+                                      await context
+                                          .read<CartProvider>()
+                                          .addProductInCart(
+                                              productId: widget.product_id!,
+                                              quantity: count);
                                       //  await DbHelper.addProductInCart(widget.product_id,await DbHelper.getUserId(),count);
                                       //  print(await DbHelper.selectCartData(await DbHelper.getUserId()));
-                                      //  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Cart()));
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => Cart()));
                                     },
                                     child: const Text(
                                       "Add to Cart",
@@ -191,15 +199,19 @@ class _ProductPageState extends State<ProductPage> {
                     if (await context
                         .read<WishListProvider>()
                         .productInWishlist(productId: widget.product_id!)) {
-                      var removed = true;
-                      if (removed) {
+                      var result = await context
+                          .read<WishListProvider>()
+                          .removeProductFromWishList(
+                              productId: widget.product_id!);
+
+                      if (result) {
                         isfavorite = false;
                       }
                     } else {
                       // await DbHelper.addWishlist(widget.product_id, userid);
                       var result = await context
                           .read<WishListProvider>()
-                          .addProductInWidhList(productId: widget.product_id!);
+                          .addProductInWishList(productId: widget.product_id!);
                       if (result) {
                         isfavorite = true;
                       }

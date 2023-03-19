@@ -27,6 +27,28 @@ class WishListHandler {
     }
   }
 
+  static Future<bool> removeProductFromWishList(
+      {required int productId}) async {
+    WishListModel? wishListModel;
+    try {
+      var data = await getWishlist();
+      if (data != null) {
+        wishListModel =
+            data.firstWhereOrNull((element) => element.product.id == productId);
+      }
+      var response = await dio.delete("/wishlists/${wishListModel!.id}");
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      log(e.toString(), name: "remove wishlist api error");
+      Fluttertoast.showToast(msg: "Please try after some time");
+      return false;
+    }
+  }
+
   static Future<List<WishListModel>?> getWishlist() async {
     try {
       var response =

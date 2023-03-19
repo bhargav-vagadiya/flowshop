@@ -2,9 +2,12 @@ import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/ProductPage.dart';
+import 'package:flowshop/models/wishlist_model.dart';
+import 'package:flowshop/providers/wishlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Wishlist extends StatefulWidget {
@@ -15,15 +18,12 @@ class Wishlist extends StatefulWidget {
 }
 
 class _WishlistState extends State<Wishlist> {
+  List<WishListModel>? item = [];
 
-  List item=[];
-
-  getData() async{
-    var userId = await DbHelper.getUserId();
-    item = await DbHelper.getWishlistProducts(userId);
-    setState(() {
-
-    });
+  getData() async {
+    // var userId = aw;
+    item = await context.read<WishListProvider>().getWishList();
+    setState(() {});
   }
 
   @override
@@ -32,31 +32,36 @@ class _WishlistState extends State<Wishlist> {
     super.initState();
     getData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgcolor,
-      appBar:  AppBar(
-        title: Text("Wishlist",style: TextStyle(color: darkbrown,fontWeight: FontWeight.bold),),
-      elevation: 0,
-      leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Image.asset("images/icons/arrow-backward.webp")),
-      actions: [
-        IconButton(
+      appBar: AppBar(
+        title: Text(
+          "Wishlist",
+          style: TextStyle(color: darkbrown, fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
+        leading: IconButton(
             onPressed: () {
-              //Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart()));
+              Navigator.pop(context);
             },
-            icon: Image.asset("images/icons/md-cart.webp"))
-      ],
-    ),
+            icon: Image.asset("images/icons/arrow-backward.webp")),
+        actions: [
+          IconButton(
+              onPressed: () {
+                //Navigator.pop(context);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Cart()));
+              },
+              icon: Image.asset("images/icons/md-cart.webp"))
+        ],
+      ),
       body: Stack(
         children: [
           Visibility(
-              visible: item.isEmpty,
+              visible: item == null || item!.isEmpty,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -68,11 +73,11 @@ class _WishlistState extends State<Wishlist> {
                       color: brown,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only( top: 20),
+                      padding: const EdgeInsets.only(top: 20),
                       child: Text(
                         "Wishlist is Empty",
                         style: TextStyle(
-                          fontFamily: "Squre",
+                            fontFamily: "Squre",
                             color: darkbrown,
                             fontWeight: FontWeight.bold,
                             fontSize: 25),
@@ -82,27 +87,33 @@ class _WishlistState extends State<Wishlist> {
                   ],
                 ),
               )),
-              Visibility(
-                visible: item.isNotEmpty,
-                child: ListView.builder(
+          Visibility(
+            visible: item != null || item!.isNotEmpty,
+            child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: item.length,
+                itemCount: item!.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
-                    onTap: (){
-                      Get.off(ProductPage(
-                        product_id: item[index]['product_id'],
-                        product_name: item[index]['product_name'],
-                        image_path: item[index]['image_path'],
-                        qty: item[index]['qty'],
-                        price: item[index]['price'],
-                        description: item[index]['description'],
+                    onTap: () async {
+                      await Get.to(ProductPage(
+                        product_id: item![index].product.id,
+                        product_name: item![index].product.name,
+                        image_path: item![index].product.imageUrl,
+                        qty: item![index].product.quantity,
+                        price: item![index].product.price,
+                        description: item![index].product.description,
                       ));
+                      if (mounted) {
+                        getData();
+                      }
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+                      padding: const EdgeInsets.only(
+                          top: 5.0, left: 10.0, right: 10.0),
                       child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: homeproduct),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: homeproduct),
                         child: Row(
                           children: [
                             Padding(
@@ -113,16 +124,23 @@ class _WishlistState extends State<Wishlist> {
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(20),
-                                      image: DecorationImage(image: AssetImage("${item[index]['image_path']}")))),
+                                      image: DecorationImage(
+                                          image: NetworkImage(
+                                              "${item![index].product.imageUrl}")))),
                             ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text("${item[index]['product_name']}",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
                                   Text(
-                                    "${item[index]['description']}",
+                                    "${item![index].product.name}",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "${item![index].product.description}",
                                     maxLines: 2,
                                     softWrap: true,
                                     overflow: TextOverflow.ellipsis,
@@ -137,8 +155,8 @@ class _WishlistState extends State<Wishlist> {
                     ),
                   );
                 }),
-              ),
-            ],
+          ),
+        ],
       ),
     );
   }
