@@ -399,7 +399,7 @@ class DbHelper {
     return result;
   }
 
-  //orders
+  //orders 
   static makeOrder(List products, userId, paymentMode, DateTime buyingTime,
       double total_product_price, double shipping_charge) async {
     var db = await initdatabase();

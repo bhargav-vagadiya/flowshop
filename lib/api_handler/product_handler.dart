@@ -9,9 +9,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 class ProductHandler {
   static var dio = DioConfig().dio;
 
- static Future<List<ProductModel>?> getProducts() async {
+  static Future<List<ProductModel>?> getProducts({int sellerId = 0}) async {
     try {
-      var response = await dio.get("/products");
+      var response = sellerId == 0
+          ? await dio.get("/products")
+          : await dio.get("/products/seller/$sellerId");
       if (response.statusCode == 200) {
         return productModelFromJson(jsonEncode(response.data));
       }

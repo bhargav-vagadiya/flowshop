@@ -1,5 +1,6 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Login%20&%20Register/Login.dart';
 import 'package:flowshop/models/user_model.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -14,18 +15,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 // ignore: must_be_immutable
-class UserDetails extends StatefulWidget {
+class BuyerDetails extends StatefulWidget {
   bool update;
   String? phoneNumber;
 
-  UserDetails({Key? key, required this.update, this.phoneNumber})
+  BuyerDetails({Key? key, required this.update, this.phoneNumber})
       : super(key: key);
 
   @override
-  State<UserDetails> createState() => _UserDetailsState();
+  State<BuyerDetails> createState() => _BuyerDetailsState();
 }
 
-class _UserDetailsState extends State<UserDetails> {
+class _BuyerDetailsState extends State<BuyerDetails> {
   bool passwordVisible = false, confirmPasswordVisible = false;
   static bool process = false;
   TextEditingController phone = TextEditingController();
@@ -39,7 +40,7 @@ class _UserDetailsState extends State<UserDetails> {
   getUserData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String data = preferences.getString("user")!;
-    UserModel userData = userModelFromJson(data);
+    BuyerModel userData = buyerModelFromJson(data);
     phone.text = userData.phone;
     firstname.text = userData.firstName;
     lastname.text = userData.lastName;
@@ -346,7 +347,7 @@ class _UserDetailsState extends State<UserDetails> {
                           bool status = await context
                               .read<UserProvider>()
                               .registerUser(
-                                  userModel: UserModel(
+                                  buyerModel: BuyerModel(
                                       firstName: firstname.text.trim(),
                                       lastName: lastname.text.trim(),
                                       phone: phone.text.trim(),
@@ -354,15 +355,21 @@ class _UserDetailsState extends State<UserDetails> {
                                       password: password.text.trim(),
                                       email: email.text.trim()));
                           if (status && mounted) {
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Login(
+                                    isSeller: false,
+                                  ),
+                                ),
+                                (route) => false);
                           }
                         }
                       } else {
                         bool result = await context
                             .read<UserProvider>()
                             .updateUser(
-                                userModel: UserModel(
+                                buyerModel: BuyerModel(
                                     firstName: firstname.text.trim(),
                                     lastName: lastname.text.trim(),
                                     phone: phone.text.trim(),

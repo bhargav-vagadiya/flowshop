@@ -7,7 +7,7 @@ import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/MyDrawer.dart';
 import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flowshop/Home/Search.dart';
-import 'package:flowshop/Login%20&%20Register/user_details.dart';
+import 'package:flowshop/Login%20&%20Register/buyer_details.dart';
 import 'package:flowshop/models/product_model.dart';
 import 'package:flowshop/providers/product_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -17,14 +17,14 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
+class BuyerDashboard extends StatefulWidget {
+  const BuyerDashboard({Key? key}) : super(key: key);
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<BuyerDashboard> createState() => _BuyerDashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _BuyerDashboardState extends State<BuyerDashboard> {
   final GlobalKey<ScaffoldState> _scafffold = GlobalKey<ScaffoldState>();
   String? username;
 
@@ -64,7 +64,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) => Scaffold(
         key: _scafffold,
-        drawer: const MyDrawer(),
+        drawer: const MyDrawer(
+          isSeller: false,
+        ),
         backgroundColor: bgcolor,
         appBar: AppBar(
           elevation: 0,
@@ -81,7 +83,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UserDetails(
+                          builder: (context) => BuyerDetails(
                                 update: true,
                               )));
                 },

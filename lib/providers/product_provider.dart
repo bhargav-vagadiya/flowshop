@@ -17,4 +17,10 @@ class ProductProvider extends ChangeNotifier {
     loading = false;
     return products;
   }
+
+  Future<List<ProductModel>?> getProductsBySeller(
+      {required int sellerId}) async {
+    var products = await ProductHandler.getProducts(sellerId: sellerId);
+    if (products != null && products.isNotEmpty) return products;
+  }
 }

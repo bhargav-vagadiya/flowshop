@@ -1,37 +1,30 @@
 import 'package:flowshop/Constants/Constant.dart';
-import 'package:flowshop/DbHelper/DbHelper.dart';
-import 'package:flowshop/Home/buyer_dashboard.dart';
-import 'package:flowshop/Home/seller_dashboard.dart';
-import 'package:flowshop/Login%20&%20Register/register.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
-class Login extends StatefulWidget {
-  final bool isSeller;
-  const Login({Key? key, required this.isSeller}) : super(key: key);
+class ChangePassword extends StatefulWidget {
+  bool isSeller;
+
+  ChangePassword({Key? key, required this.isSeller}) : super(key: key);
   @override
-  State<Login> createState() => _LoginState();
+  State<ChangePassword> createState() => _ChangePasswordState();
 }
 
-class _LoginState extends State<Login> {
-  bool passwordVisible = false;
+class _ChangePasswordState extends State<ChangePassword> {
+  bool passwordVisible = false,
+      oldPasswordVisible = false,
+      newPasswordVisible = false;
   TextEditingController username = TextEditingController();
-  TextEditingController password = TextEditingController();
+  TextEditingController oldPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   bool process = false;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +45,7 @@ class _LoginState extends State<Login> {
                   Padding(
                     padding: EdgeInsets.only(top: 100.0.h, left: 40.w),
                     child: Text(
-                      "Login With Us",
+                      "Change Password",
                       style: TextStyle(
                           fontSize: 35.sp,
                           fontWeight: FontWeight.bold,
@@ -75,32 +68,77 @@ class _LoginState extends State<Login> {
                         child: Column(
                           children: [
                             TextField(
-                              controller: username,
-                              inputFormatters: [
-                                FilteringTextInputFormatter(RegExp("[+ ]"),
-                                    allow: false)
-                              ],
-                              style: const TextStyle(color: Colors.white),
+                              controller: oldPassword,
+                              obscureText: !oldPasswordVisible,
                               enableSuggestions: true,
-                              maxLength: 10,
-                              textInputAction: TextInputAction.next,
+                              style: const TextStyle(color: Colors.white),
                               decoration: InputDecoration(
-                                  counterText: "",
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          oldPasswordVisible =
+                                              !oldPasswordVisible;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        Icons.remove_red_eye,
+                                        color: oldPasswordVisible
+                                            ? brown
+                                            : Colors.white.withOpacity(0.50),
+                                      )),
                                   enabledBorder: const UnderlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.white)),
-                                  hintText: "Phone number",
+                                  hintText: "Old Password",
                                   hintStyle: TextStyle(
                                       color: Colors.white.withOpacity(0.70),
                                       fontSize: 17.sp)),
                               cursorColor: Colors.white,
-                              autofillHints: const [AutofillHints.username],
+                              keyboardType: TextInputType.visiblePassword,
+                              autofillHints: const [AutofillHints.password],
+                              onEditingComplete: () =>
+                                  TextInput.finishAutofillContext(),
                             ),
                             const SizedBox(
                               height: 20,
                             ),
                             TextField(
-                              controller: password,
+                              controller: newPassword,
+                              obscureText: !newPasswordVisible,
+                              enableSuggestions: true,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          newPasswordVisible =
+                                              !newPasswordVisible;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        Icons.remove_red_eye,
+                                        color: newPasswordVisible
+                                            ? brown
+                                            : Colors.white.withOpacity(0.50),
+                                      )),
+                                  enabledBorder: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  hintText: "New Password",
+                                  hintStyle: TextStyle(
+                                      color: Colors.white.withOpacity(0.70),
+                                      fontSize: 17.sp)),
+                              cursorColor: Colors.white,
+                              keyboardType: TextInputType.visiblePassword,
+                              autofillHints: const [AutofillHints.password],
+                              onEditingComplete: () =>
+                                  TextInput.finishAutofillContext(),
+                            ),
+                            SizedBox(
+                              height: 20.h,
+                            ),
+                            TextField(
+                              controller: confirmPassword,
                               obscureText: !passwordVisible,
                               enableSuggestions: true,
                               style: const TextStyle(color: Colors.white),
@@ -120,7 +158,7 @@ class _LoginState extends State<Login> {
                                   enabledBorder: const UnderlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.white)),
-                                  hintText: "Password",
+                                  hintText: "Confirm New Password",
                                   hintStyle: TextStyle(
                                       color: Colors.white.withOpacity(0.70),
                                       fontSize: 17.sp)),
@@ -144,47 +182,38 @@ class _LoginState extends State<Login> {
                         minimumSize:
                             MaterialStateProperty.all(Size(170.w, 50.h))),
                     onPressed: () async {
-                      if (username.text.trim().isEmpty) {
+                      if (oldPassword.text.trim().isEmpty) {
                         Fluttertoast.showToast(
-                            msg: "please enter phone number");
-                      } else if (password.text.trim().isEmpty) {
-                        Fluttertoast.showToast(msg: "please enter password");
+                            msg: "please enter old confirmPassword");
+                      } else if (newPassword.text.trim().isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: "please enter new confirmPassword");
+                      } else if (confirmPassword.text.trim().isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: "please enter new confirm confirmPassword");
+                      } else if (newPassword.text.trim() !=
+                          confirmPassword.text.trim()) {
+                        Fluttertoast.showToast(msg: "Password didn't match");
                       } else {
-                        // var database = await DbHelper.initdatabase();
-                        var provider = context.read<UserProvider>();
-
-                        bool result = widget.isSeller
-                            ? await provider.loginSeller(
-                                phone: username.text.trim(),
-                                password: password.text.trim())
-                            : await provider.loginUser(
-                                phone: username.text.trim(),
-                                password: password.text.trim());
+                        bool result = await context
+                            .read<UserProvider>()
+                            .updateUserPassword(
+                                isSeller: widget.isSeller,
+                                oldPassword: oldPassword.text.trim(),
+                                newPassword: newPassword.text.trim());
 
                         if (kDebugMode) {
                           print(result);
                         }
-                        if (result && mounted) {
-                          if (widget.isSeller) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SellerDashboard()));
-                          } else {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BuyerDashboard()));
-                          }
+                        if (result) {
+                          Navigator.pop(context);
                         }
                       }
                     },
                     child: context.watch<UserProvider>().loading
                         ? const CircularProgressIndicator()
                         : Text(
-                            "Login",
+                            "Change Password",
                             style: TextStyle(
                                 fontSize: 25.sp,
                                 fontWeight: FontWeight.bold,
@@ -194,30 +223,6 @@ class _LoginState extends State<Login> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Center(
-                    child: RichText(
-                        text: TextSpan(
-                            text: "Don't have an account? ",
-                            style: TextStyle(
-                                color: brown,
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w500),
-                            children: [
-                          TextSpan(
-                              text: "Sign in",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.sp),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Register(
-                                                isSeller: widget.isSeller,
-                                              )));
-                                })
-                        ])),
-                  )
                 ],
               )
             ],

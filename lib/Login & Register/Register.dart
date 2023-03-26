@@ -1,13 +1,16 @@
 import 'package:flowshop/Constants/Constant.dart';
+import 'package:flowshop/Login%20&%20Register/Login.dart';
 import 'package:flowshop/Login%20&%20Register/otp.dart';
 import 'package:flowshop/providers/user_provider.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class Register extends StatefulWidget {
-  const Register({super.key});
+  final bool isSeller;
+  const Register({super.key, required this.isSeller});
 
   @override
   State<Register> createState() => _RegisterState();
@@ -131,19 +134,50 @@ class _RegisterState extends State<Register> {
                     if (formKey.currentState!.validate()) {
                       bool status = await context
                           .read<UserProvider>()
-                          .checkUserIsRegistered(phone: phoneController.text);
+                          .checkUserIsRegistered(
+                              phone: phoneController.text,
+                              isSeller: widget.isSeller);
                       if (status == false && mounted) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    OTP(phoneNumber: phoneController.text)));
+                                builder: (context) => OTP(
+                                      phoneNumber: phoneController.text,
+                                      isSeller: widget.isSeller,
+                                    )));
                       }
                     }
                   },
                   child: context.watch<UserProvider>().loading
                       ? CircularProgressIndicator()
                       : const Text("Get OTP")),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: RichText(
+                  text: TextSpan(
+                      text: "already have an account? ",
+                      style: TextStyle(
+                          color: brown,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w500),
+                      children: [
+                    TextSpan(
+                        text: "Log in",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20.sp),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Login(
+                                          isSeller: widget.isSeller,
+                                        )));
+                          })
+                  ])),
             )
           ],
         ),

@@ -1,8 +1,11 @@
 import 'package:flowshop/Constants/Constant.dart';
-import 'package:flowshop/Home/Dashboard.dart';
-import 'package:flowshop/Login & Register/Login.dart';
+import 'package:flowshop/Home/buyer_dashboard.dart';
+import 'package:flowshop/Home/seller_dashboard.dart';
+import 'package:flowshop/Login%20&%20Register/Login.dart';
+import 'package:flowshop/models/seller_model.dart';
 import 'package:flowshop/models/user_model.dart';
 import 'package:flowshop/providers/user_provider.dart';
+import 'package:flowshop/role_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,28 +21,44 @@ class _SplashState extends State<Splash> {
   userIsLogged() async {
     String? user;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    user = prefs.getString("user");
+    var roleType = prefs.getString("roleType");
+    if (roleType == "buyer") {
+      user = prefs.getString("user");
+    } else {
+      user = prefs.getString("seller");
+    }
+
     if (user == null) {
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => Login(
-                  changePassword: false,
-                )));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => RoleSelectionScreen()));
       });
     } else {
-      UserModel userModel = userModelFromJson(user);
-      if (mounted) {
-        bool result = await context
-            .read<UserProvider>()
-            .loginUser(phone: userModel.phone, password: userModel.password);
-        if (result && mounted) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const Dashboard()));
-        } else {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => Login(
-                    changePassword: false,
-                  )));
+      if (roleType == "buyer") {
+        BuyerModel buyerModel = buyerModelFromJson(user);
+        if (mounted) {
+          bool result = await context.read<UserProvider>().loginUser(
+              phone: buyerModel.phone, password: buyerModel.password);
+          if (result && mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const BuyerDashboard()));
+          } else {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => RoleSelectionScreen()));
+          }
+        }
+      } else {
+        SellerModel sellerModel = sellerModelFromJson(user);
+        if (mounted) {
+          bool result = await context.read<UserProvider>().loginSeller(
+              phone: sellerModel.phone, password: sellerModel.password);
+          if (result && mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const SellerDashboard()));
+          } else {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => RoleSelectionScreen()));
+          }
         }
       }
     }

@@ -2,13 +2,17 @@ import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/OrderItems.dart';
 import 'package:flowshop/Home/Wishlist.dart';
+import 'package:flowshop/Home/change_password.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
+import 'package:flowshop/models/seller_model.dart';
 import 'package:flowshop/models/user_model.dart';
+import 'package:flowshop/role_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyDrawer extends StatefulWidget {
-  const MyDrawer({Key? key}) : super(key: key);
+  final bool isSeller;
+  const MyDrawer({Key? key, required this.isSeller}) : super(key: key);
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
@@ -19,9 +23,15 @@ class _MyDrawerState extends State<MyDrawer> {
 
   getUserName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var user = userModelFromJson(prefs.getString("user")!);
+    var user = widget.isSeller
+        ? sellerModelFromJson(prefs.getString("seller")!)
+        : buyerModelFromJson(prefs.getString("user")!);
     setState(() {
-      username = "${user.firstName} ${user.lastName}";
+      username = user is BuyerModel
+          ? "${user.firstName} ${user.lastName}"
+          : user is SellerModel
+              ? user.name
+              : "";
     });
   }
 
@@ -47,11 +57,11 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
             subtitle: Text(
               username.toString(),
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 15, fontWeight: FontWeight.bold, color: brown),
             ),
           ),
-          Divider(
+          const Divider(
             color: brown,
             thickness: 5,
             height: 0,
@@ -62,57 +72,65 @@ class _MyDrawerState extends State<MyDrawer> {
             child: ListView(
               shrinkWrap: true,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.shopping_cart_outlined,
-                    color: brown,
+                if (!widget.isSeller)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.shopping_cart_outlined,
+                      color: brown,
+                    ),
+                    title: const Text(
+                      "My Cart",
+                      style: TextStyle(color: brown),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Cart()));
+                    },
                   ),
-                  title: Text(
-                    "My Cart",
-                    style: TextStyle(color: brown),
-                  ),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Cart()));
-                  },
-                ),
                 ListTile(
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.star_border_purple500_rounded,
                     color: brown,
                   ),
-                  title: Text(
+                  title: const Text(
                     "My Orders",
                     style: TextStyle(color: brown),
                   ),
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OrderItems()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const OrderItems()));
                   },
                 ),
-                ListTile(
-                  leading: Icon(
-                    Icons.favorite_border,
-                    color: brown,
+                if (!widget.isSeller)
+                  ListTile(
+                    leading: const Icon(
+                      Icons.favorite_border,
+                      color: brown,
+                    ),
+                    title: const Text(
+                      "My Wishlist",
+                      style: TextStyle(color: brown),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Wishlist()));
+                    },
                   ),
-                  title: Text(
-                    "My Wishlist",
-                    style: TextStyle(color: brown),
-                  ),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Wishlist()));
-                  },
-                ),
                 ListTile(
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.key,
                     color: brown,
                   ),
-                  title: Text(
+                  title: const Text(
                     "Change Password",
                     style: TextStyle(color: brown),
                   ),
@@ -120,29 +138,32 @@ class _MyDrawerState extends State<MyDrawer> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Login(
-                                  changePassword: true,
+                            builder: (context) => ChangePassword(
+                                  isSeller: widget.isSeller,
                                 )));
                   },
                 ),
                 ListTile(
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.exit_to_app,
                     color: brown,
                   ),
-                  title: Text(
+                  title: const Text(
                     "Log out",
                     style: TextStyle(color: brown),
                   ),
                   onTap: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.remove("user");
+                    if (widget.isSeller)
+                      prefs.remove("seller");
+                    else
+                      prefs.remove("user");
+
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                Login(changePassword: false)));
+                            builder: (context) => RoleSelectionScreen()));
                   },
                 )
               ],

@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
-import 'package:flowshop/Login%20&%20Register/user_details.dart';
+import 'package:flowshop/Login%20&%20Register/buyer_details.dart';
+import 'package:flowshop/Login%20&%20Register/seller_details.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,10 @@ import 'package:provider/provider.dart';
 
 class OTP extends StatefulWidget {
   final String phoneNumber;
+  final bool isSeller;
 
-  const OTP({
-    Key? key,
-    required this.phoneNumber,
-  }) : super(key: key);
+  const OTP({Key? key, required this.phoneNumber, required this.isSeller})
+      : super(key: key);
 
   @override
   State<OTP> createState() => _OTPState();
@@ -132,13 +132,23 @@ class _OTPState extends State<OTP> {
                       UserCredential? user = await firebaseAuth
                           .signInWithCredential(authCredential);
                       if (mounted) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserDetails(
-                                      update: false,
-                                      phoneNumber: widget.phoneNumber,
-                                    )));
+                        if (widget.isSeller) {
+                           Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SellerDetails(
+                                        update: false,
+                                        phoneNumber: widget.phoneNumber,
+                                      )));
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BuyerDetails(
+                                        update: false,
+                                        phoneNumber: widget.phoneNumber,
+                                      )));
+                        }
                       }
                     } on FirebaseAuthException catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

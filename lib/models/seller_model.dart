@@ -1,63 +1,63 @@
 // To parse this JSON data, do
 //
-//     final buyerModel = buyerModelFromJson(jsonString);
+//     final sellerModel = sellerModelFromJson(jsonString);
 
 import 'dart:convert';
 
-BuyerModel buyerModelFromJson(String str) =>
-    BuyerModel.fromJson(json.decode(str));
+SellerModel sellerModelFromJson(String str) =>
+    SellerModel.fromJson(json.decode(str));
 
-Map<String, dynamic> buyerModelToJson(BuyerModel data) => data.toJson();
+Map<String, dynamic> sellerModelToJson(SellerModel data) => data.toJson();
 
-class BuyerModel {
-  BuyerModel({
+class SellerModel {
+  SellerModel({
     this.id = 0,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.password,
+    required this.name,
     required this.phone,
+    required this.email,
     required this.address,
+    required this.shopName,
+    required this.password,
     this.createdAt,
     this.updatedAt,
   });
 
   final int id;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String password;
+  final String name;
   final String phone;
+  final String email;
   final String address;
+  final String shopName;
+  final String password;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  factory BuyerModel.fromJson(Map<String, dynamic> json) => BuyerModel(
+  factory SellerModel.fromJson(Map<String, dynamic> json) => SellerModel(
         id: json["id"],
-        firstName: json["first_name"],
-        lastName: json["last_name"],
-        email: json["email"],
-        password: json["password"],
+        name: json["name"],
         phone: json["phone"],
+        email: json["email"],
         address: json["address"],
+        shopName: json["shop_name"],
+        password: json["password"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "first_name": firstName,
-        "last_name": lastName,
-        "email": email,
-        "password": password,
+        "name": name,
         "phone": phone,
-        "address": address
+        "email": email,
+        "address": address,
+        "shop_name": shopName,
+        "password": password,
       };
 
   @override
   String toString() => jsonEncode({
         "id": id,
-        "first_name": firstName,
-        "last_name": lastName,
+        "name": name,
+        "shop_name": shopName,
         "email": email,
         "password": password,
         "phone": phone,
