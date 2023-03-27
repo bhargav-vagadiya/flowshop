@@ -62,7 +62,7 @@ class UserHandler {
         return null;
       }
     } on DioError catch (e) {
-      log(e.toString(), name: "user login api error");
+      log(e.message.toString(), name: "user login api error");
       if (e.response?.statusCode == 404) {
         Fluttertoast.showToast(msg: "Invalid phone or password");
       } else {

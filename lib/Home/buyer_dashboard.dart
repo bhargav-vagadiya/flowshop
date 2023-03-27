@@ -263,7 +263,7 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
                                   width: 200,
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(50)),
-                                  child: Image.asset("$imagePath",
+                                  child: Image.network("${result[0].imageUrl}",
                                       fit: BoxFit.cover),
                                 ),
                               ),

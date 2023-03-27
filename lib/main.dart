@@ -23,9 +23,17 @@ void main() async {
     }
   };
   WidgetsFlutterBinding.ensureInitialized();
-  var db = await DbHelper.initdatabase();
-  DbHelper.getProductDetails(db);
-  await Firebase.initializeApp();
+  // var db = await DbHelper.initdatabase();
+  // DbHelper.getProductDetails(db);
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyA-sV_Jf9qq9U1UvW8I6pqK768RwV3WmKc",
+          appId: "1:125256286410:web:178e333da90554ff1ef433",
+          messagingSenderId: "125256286410",
+          projectId: "flowshop-248a6",
+          authDomain: "flowshop-248a6.firebaseapp.com",
+          storageBucket: "flowshop-248a6.appspot.com",
+          measurementId: "G-NZR4RYH871"));
   runApp(const MyApp());
 }
 

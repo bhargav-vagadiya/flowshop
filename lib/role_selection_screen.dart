@@ -37,9 +37,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(8.0.sp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: ListView(
             children: [
               SizedBox(
                 height: 20.h,
@@ -92,7 +90,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                                   color: brown,
                                   borderRadius: BorderRadius.circular(10)),
                               width: MediaQuery.of(context).size.width / 2.2,
-                              height: 50,
+                              height: 50.h,
                             )),
                         Row(
                           children: [
@@ -104,7 +102,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width / 2.2,
-                                height: 50,
+                                height: 50.h,
                                 color: Colors.transparent,
                                 child: Center(
                                   child: Text(
@@ -126,7 +124,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                                 });
                               },
                               child: Container(
-                                height: 50,
+                                height: 50.h,
                                 color: Colors.transparent,
                                 width:
                                     MediaQuery.of(context).size.width / 2.235,
