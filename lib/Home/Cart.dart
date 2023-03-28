@@ -104,8 +104,10 @@ class _CartState extends State<Cart> {
                         return InkWell(
                           onTap: () {
                             Get.to(ProductPage(
+                              isSeller: false,
                               product_id: item![index].product.id,
                               product_name: item![index].product.name,
+                              flower_type: item![index].product.flowerType,
                               image_path: item![index].product.imageUrl,
                               qty: item![index].product.quantity,
                               price: item![index].product.price,

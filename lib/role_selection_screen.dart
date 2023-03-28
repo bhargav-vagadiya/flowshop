@@ -37,7 +37,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(8.0.sp),
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 20.h,
@@ -54,7 +55,9 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                 style: TextStyle(
                     fontSize: 30.sp, color: brown, fontWeight: FontWeight.bold),
               ),
-              Spacer(),
+              SizedBox(
+                height: 50.h,
+              ),
               Center(
                 child: SizedBox(
                     height: 150.h,
@@ -63,14 +66,16 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                       "images/splash_flower.png",
                     )),
               ),
-              Spacer(),
+              SizedBox(
+                height: 50.h,
+              ),
               Text(
                 "Are you?",
                 style: TextStyle(
                     fontSize: 30.sp, color: brown, fontWeight: FontWeight.bold),
               ),
               SizedBox(
-                height: 30.h,
+                height: 15.h,
               ),
               Padding(
                   padding: EdgeInsets.all(8.0.r),
@@ -79,7 +84,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                         color: brown.withOpacity(0.3),
                         borderRadius: BorderRadius.circular(10)),
                     width: MediaQuery.of(context).size.width,
-                    height: 50,
+                    height: 40.h,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -124,7 +129,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                                 });
                               },
                               child: Container(
-                                height: 50.h,
+                                height: 40.h,
                                 color: Colors.transparent,
                                 width:
                                     MediaQuery.of(context).size.width / 2.235,
@@ -176,14 +181,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen>
                       Text(
                         "Next",
                         style: TextStyle(
-                            color: darkbrown,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.sp),
+                          color: darkbrown,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Icon(
                         Icons.arrow_forward_ios_sharp,
                         color: darkbrown,
-                        size: 20.sp,
                       ),
                     ],
                   ),

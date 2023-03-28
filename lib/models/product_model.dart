@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
+
 List<ProductModel> productModelFromJson(String str) => List<ProductModel>.from(
     json.decode(str).map((x) => ProductModel.fromJson(x)));
 
@@ -20,7 +22,7 @@ class ProductModel {
     required this.price,
     required this.sellerId,
     this.rating,
-    required this.imageUrl,
+    this.imageUrl,
   });
 
   final int id;
@@ -31,7 +33,7 @@ class ProductModel {
   final double price;
   final int sellerId;
   final dynamic rating;
-  final String imageUrl;
+  final String? imageUrl;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
         id: json["id"],
@@ -54,6 +56,6 @@ class ProductModel {
         "price": price,
         "seller_id": sellerId,
         "rating": rating,
-        "image_url": imageUrl,
+        "image": MultipartFile.fromFileSync(imageUrl!),
       };
 }

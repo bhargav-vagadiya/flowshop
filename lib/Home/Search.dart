@@ -57,8 +57,10 @@ class _SearchState extends State<Search> {
             return InkWell(
               onTap: (){
                 Get.to(ProductPage(
+                  isSeller: false,
                   product_id: item[index]['product_id'],
                   product_name: item[index]['product_name'],
+                  flower_type: item[index]['flower_type'],
                   image_path: item[index]['image_path'],
                   qty: item[index]['qty'],
                   price: item[index]['price'],

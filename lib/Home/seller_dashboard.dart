@@ -25,12 +25,14 @@ class _SellerDashboardState extends State<SellerDashboard> {
 
   int sellerId = 0;
 
+  setSellerId() async {
+    sellerId = await UserHandler.getSellerId();
+    setState(() {});
+  }
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      sellerId = await UserHandler.getSellerId();
-      setState(() {});
-    });
+    setSellerId();
     super.initState();
   }
 
@@ -50,7 +52,6 @@ class _SellerDashboardState extends State<SellerDashboard> {
         actions: [
           IconButton(
               onPressed: () {
-                // Fluttertoast.showToast(msg: "Feature under development");
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -82,7 +83,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
           ),
           Expanded(
             child: FutureBuilder<List<ProductModel>?>(
-                future: Provider.of<ProductProvider>(context, listen: false)
+                future: Provider.of<ProductProvider>(context, listen: true)
                     .getProductsBySeller(sellerId: sellerId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -98,14 +99,20 @@ class _SellerDashboardState extends State<SellerDashboard> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () async {
-                            await Get.to(ProductPage(
-                              product_id: item![index].id,
-                              product_name: item![index].name,
-                              image_path: item![index].imageUrl,
-                              qty: item![index].quantity,
-                              price: item![index].price,
-                              description: item![index].description,
-                            ));
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductPage(
+                                    isSeller: true,
+                                    product_id: item[index].id,
+                                    product_name: item[index].name,
+                                    flower_type: item[index].flowerType,
+                                    image_path: item[index].imageUrl,
+                                    qty: item[index].quantity,
+                                    price: item[index].price,
+                                    description: item[index].description,
+                                  ),
+                                ));
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(
@@ -173,7 +180,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AddProduct(),
+                  builder: (context) => const AddProduct(isUpdate: false),
                 ));
           },
           child: const Icon(Icons.add)),
