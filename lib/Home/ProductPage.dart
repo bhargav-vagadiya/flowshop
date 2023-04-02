@@ -9,10 +9,11 @@ import 'package:flowshop/providers/wishlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
 
 class ProductPage extends StatefulWidget {
   String? product_name, image_path, flower_type, description;
-  int? product_id, qty;
+  int? product_id,seller_id, qty;
   double? price;
   bool isSeller;
 
@@ -20,6 +21,7 @@ class ProductPage extends StatefulWidget {
       {Key? key,
       required this.isSeller,
       required this.product_id,
+      required this.seller_id,
       required this.product_name,
       required this.flower_type,
       required this.image_path,
@@ -157,16 +159,29 @@ class _ProductPageState extends State<ProductPage> {
                                     onPressed: () async {
                                       if (!widget.isSeller) {
                                         print(count);
-                                        // Fluttertoast.showToast(
-                                        //     msg:
-                                        //         "currently you can't add product to cart due to maintainance");
-                                        await context
+                                        var item = await context
                                             .read<CartProvider>()
-                                            .addProductInCart(
-                                                productId: widget.product_id!,
-                                                quantity: count);
-                                        //  await DbHelper.addProductInCart(widget.product_id,await DbHelper.getUserId(),count);
-                                        //  print(await DbHelper.selectCartData(await DbHelper.getUserId()));
+                                            .getCart();
+
+                                        var cartItem = item!.firstWhereOrNull(
+                                            (element) =>
+                                                element.product.id ==
+                                                widget.product_id);
+                                        if (cartItem != null) {
+                                          for (int i = 0; i < count; i++) {
+                                            await context
+                                                .read<CartProvider>()
+                                                .addCartQuantity(
+                                                    cartId: cartItem.id);
+                                          }
+                                        } else {
+                                          await context
+                                              .read<CartProvider>()
+                                              .addProductInCart(
+                                                  productId: widget.product_id!,
+                                                  quantity: count,sellerId: widget.seller_id!);
+                                        }
+
                                         Navigator.of(context).push(
                                             MaterialPageRoute(
                                                 builder: (context) => Cart()));
@@ -217,7 +232,9 @@ class _ProductPageState extends State<ProductPage> {
                 image: DecorationImage(
                     image:
                         //NetworkImage("https://img.teleflora.com/images/o_0/l_flowers:TEV58-7C,pg_6/w_368,h_460,cs_no_cmyk,c_pad/f_jpg,q_auto:eco,e_sharpen:200/flowers/TEV58-7C/Teleflora'sMidModBrightsBouquetPM?image=9"),
-                        NetworkImage("${widget.image_path}",),
+                        NetworkImage(
+                      "${widget.image_path}",
+                    ),
                     fit: BoxFit.contain)),
           ),
           if (!widget.isSeller)

@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/Login%20&%20Register/add_location.dart';
 import 'package:flowshop/Splash/Splash.dart';
 import 'package:flowshop/providers/cart_provider.dart';
+import 'package:flowshop/providers/order_provider.dart';
 import 'package:flowshop/providers/product_provider.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flowshop/providers/wishlist_provider.dart';
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => WishListProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => OrderProvider()),
       ],
       child: ScreenUtilInit(
           builder: (BuildContext context, Widget? child) {

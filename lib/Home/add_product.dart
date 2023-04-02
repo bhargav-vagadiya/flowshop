@@ -285,6 +285,7 @@ class _AddProductState extends State<AddProduct> {
                               ? await provider.updateProduct(model)
                               : await provider.addProduct(model);
                           if (result && mounted) {
+                            if(widget.isUpdate) Navigator.pop(context);
                             Navigator.pop(context);
                           }
                         } else {

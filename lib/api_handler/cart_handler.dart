@@ -11,7 +11,7 @@ class CartHandler {
   static Future<bool> addProductInCart(
       {required int productId, required int quantity}) async {
     try {
-      var response = await dio.post("/carts", queryParameters: {
+      var response = await dio.post("/cart_items", queryParameters: {
         "user_id": await UserHandler.getUserId(),
         "product_id": productId,
         "cart_quantity": quantity
@@ -31,7 +31,9 @@ class CartHandler {
   static Future<List<CartModel>?> getCart() async {
     try {
       var response =
-          await dio.get("/carts/find/${await UserHandler.getUserId()}");
+          await dio.get("/cart_items",queryParameters: {
+            "user_id":await UserHandler.getUserId()
+          });
       if (response.statusCode == 200) {
         return cartModelFromJson(jsonEncode(response.data));
       }
@@ -40,5 +42,33 @@ class CartHandler {
       log(s.toString());
     }
     return null;
+  }
+
+  static Future<bool> addCartQuantity({required int cartId}) async{
+    try {
+      var response =
+      await dio.patch("/cart_items/add_quantity_to_cart/$cartId");
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e, s) {
+      log(e.toString(), name: "cart get api error");
+      log(s.toString());
+    }
+    return false;
+  }
+
+  static Future<bool> removeCartQuantity({required int cartId})  async{
+    try {
+      var response =
+      await dio.patch("/cart_items/remove_quantity_to_cart/$cartId");
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e, s) {
+      log(e.toString(), name: "cart get api error");
+      log(s.toString());
+    }
+    return false;
   }
 }

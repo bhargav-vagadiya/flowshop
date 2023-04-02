@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
+import 'package:flowshop/models/order_model.dart';
+import 'package:flowshop/providers/order_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyOrder extends StatefulWidget {
   var orderId;
@@ -15,73 +18,74 @@ class MyOrder extends StatefulWidget {
 }
 
 class _MyOrderState extends State<MyOrder> {
-  List orderDetail = [];
+  OrderModel? orderDetail;
   List itemname = [], itemQuantity = [], itemImage = [], itemPrice=[];
 
-  var dateTime,buyingTime,ReceiveOrderTime,ConfirmOrderTime,DeliveryTime;
+  var buyingTime,ReceiveOrderTime,ConfirmOrderTime,DeliveryTime;
+  DateTime? dateTime;
 
 
-  receiveOrder()async{
-    if(orderDetail[0]['order_received_time']==null){
-     await Future.delayed(Duration(seconds: 5),() async{
-        await DbHelper.ReceiveOrder(widget.orderId, DateTime.now());
-        orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
-        setState(() {
-
-          ReceiveOrderTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['order_received_time']));
-        });
-      });
-  }
-  }
-  confirmOrder()async{
-    if(orderDetail[0]['order_confirm_time']==null){
-     await Future.delayed(Duration(seconds: 5), () async{
-        await DbHelper.ConfirmOrder(widget.orderId, DateTime.now());
-        orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
-        setState(() {
-          ConfirmOrderTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['order_confirm_time']));
-        });
-      });
-
-    }
-  }
-
-  deliverOrder()async{
-    if(orderDetail[0]['out_of_delivery_time']==null){
-     await Future.delayed(Duration(seconds: 5), () async{
-        await DbHelper.DeliverOrder(widget.orderId, DateTime.now());
-        orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
-        setState(() {
-          DeliveryTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['out_of_delivery_time']));
-        });
-      });
-    }
-  }
+  // receiveOrder()async{
+  //   if(orderDetail[0]['order_received_time']==null){
+  //    await Future.delayed(Duration(seconds: 5),() async{
+  //       await DbHelper.ReceiveOrder(widget.orderId, DateTime.now());
+  //       orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
+  //       setState(() {
+  //
+  //         ReceiveOrderTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['order_received_time']));
+  //       });
+  //     });
+  // }
+  // }
+  // confirmOrder()async{
+  //   if(orderDetail[0]['order_confirm_time']==null){
+  //    await Future.delayed(Duration(seconds: 5), () async{
+  //       await DbHelper.ConfirmOrder(widget.orderId, DateTime.now());
+  //       orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
+  //       setState(() {
+  //         ConfirmOrderTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['order_confirm_time']));
+  //       });
+  //     });
+  //
+  //   }
+  // }
+  //
+  // deliverOrder()async{
+  //   if(orderDetail[0]['out_of_delivery_time']==null){
+  //    await Future.delayed(Duration(seconds: 5), () async{
+  //       await DbHelper.DeliverOrder(widget.orderId, DateTime.now());
+  //       orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
+  //       setState(() {
+  //         DeliveryTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['out_of_delivery_time']));
+  //       });
+  //     });
+  //   }
+  // }
 
   getOrderDetail() async {
-    orderDetail = await DbHelper.getOrderDetailFromId(widget.orderId);
-    itemname = orderDetail[0]['product_name'].toString().split(",");
-    itemQuantity = orderDetail[0]['quantity'].toString().split(",");
-    itemImage = orderDetail[0]['image_path'].toString().split(",");
-    dateTime = DateFormat.MMMMd()
-        .format(DateTime.parse(orderDetail[0]['buying_time']));
-    buyingTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['buying_time']));
-    if (orderDetail[0]['order_received_time']!=null) {
-      ReceiveOrderTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['order_received_time']));
+
+    orderDetail = await context.read<OrderProvider>().getOrderById(orderId: widget.orderId);
+    setState(() {
+
+    });
+    dateTime = orderDetail!.buyingTime;
+    buyingTime = DateFormat.jm().format(dateTime!);
+    if (orderDetail!.orderReceivedTime != null) {
+      ReceiveOrderTime = DateFormat.jm().format(orderDetail!.orderReceivedTime!);
     }
-    if (orderDetail[0]['order_confirm_time']!=null) {
-      ConfirmOrderTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['order_confirm_time']));
+    if (orderDetail!.orderConfirmTime!=null) {
+      ConfirmOrderTime = DateFormat.jm().format(orderDetail!.orderConfirmTime!);
     }
-    if (orderDetail[0]['out_of_delivery_time']!=null) {
-      DeliveryTime = DateFormat.jm().format(DateTime.parse(orderDetail[0]['out_of_delivery_time']));
+    if (orderDetail!.outOfDeliveryTime!=null) {
+      DeliveryTime = DateFormat.jm().format(orderDetail!.outOfDeliveryTime!);
     }
-    print(itemname);
-    print(itemQuantity);
-    print(itemImage);
-    setState(() {});
-    await receiveOrder();
-    await confirmOrder();
-    await deliverOrder();
+    // print(itemname);
+    // print(itemQuantity);
+    // print(itemImage);
+    // setState(() {});
+    // await receiveOrder();
+    // await confirmOrder();
+    // await deliverOrder();
   }
 
   @override
@@ -107,14 +111,14 @@ class _MyOrderState extends State<MyOrder> {
             },
             icon: Image.asset("images/icons/arrow-backward.webp")),
       ),
-      body: Column(
+      body: orderDetail != null? Column(
         children: [
           Container(
             //height: 230,
             constraints: const BoxConstraints(maxHeight: 260),
             child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: itemname.length,
+                itemCount: orderDetail!.orderedItems.length,
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
@@ -148,8 +152,8 @@ class _MyOrderState extends State<MyOrder> {
                                           borderRadius:
                                               BorderRadius.circular(20),
                                           image: DecorationImage(
-                                              image: AssetImage(
-                                                  "${itemImage[index]}")))),
+                                              image: NetworkImage(
+                                                  "http://20.219.59.136:3000/${orderDetail!.orderedItems[index].product.imageUrl}")))),
                                 ),
                                 Expanded(
                                   child: Column(
@@ -158,7 +162,7 @@ class _MyOrderState extends State<MyOrder> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "${itemname[index]}",
+                                        "${orderDetail!.orderedItems[index].product.name}",
                                         style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
@@ -211,7 +215,7 @@ class _MyOrderState extends State<MyOrder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${dateTime}",
+                          "${dateTime!.day}/${dateTime!.month}/${dateTime!.year}",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(
@@ -299,7 +303,7 @@ class _MyOrderState extends State<MyOrder> {
             ],
           ))
         ],
-      ),
+      ) : Container(),
     );
   }
 }

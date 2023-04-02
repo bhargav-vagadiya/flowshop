@@ -58,4 +58,15 @@ class ProductModel {
         "rating": rating,
         "image": MultipartFile.fromFileSync(imageUrl!),
       };
+
+  Map<String, dynamic> toJsonWithoutImage() => {
+    "id": id,
+    "name": name,
+    "description": description,
+    "flower_type": flowerType,
+    "quantity": quantity,
+    "price": price,
+    "seller_id": sellerId,
+    "rating": rating
+  };
 }

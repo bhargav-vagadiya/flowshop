@@ -26,6 +26,22 @@ class ProductHandler {
     return null;
   }
 
+  static Future<List<ProductModel>?> searchProducts({required String name}) async {
+    try {
+      var response =
+          await dio.get("/products/search",queryParameters: {
+            "name": name
+          });
+      if (response.statusCode == 200) {
+        return productModelFromJson(jsonEncode(response.data));
+      }
+    } on DioError catch (e) {
+      log(e.toString(), name: "search product api error");
+      Fluttertoast.showToast(msg: "Failed to load product");
+    }
+    return null;
+  }
+
   static Future<bool> addProduct(ProductModel productModel) async {
     FormData formData = FormData.fromMap(productModel.toJson());
 
@@ -38,7 +54,9 @@ class ProductHandler {
   }
 
   static Future<bool> updateProduct(ProductModel productModel) async {
-    FormData formData = FormData.fromMap(productModel.toJson());
+    FormData formData = productModel.imageUrl!.contains("http://")
+        ? FormData.fromMap(productModel.toJsonWithoutImage())
+        : FormData.fromMap(productModel.toJson());
 
     var response =
         await dio.put("/products/${productModel.id}", data: formData);

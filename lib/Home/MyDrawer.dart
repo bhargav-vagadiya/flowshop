@@ -1,8 +1,9 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/Home/Cart.dart';
-import 'package:flowshop/Home/OrderItems.dart';
+import 'package:flowshop/Home/MyOrders.dart';
 import 'package:flowshop/Home/Wishlist.dart';
 import 'package:flowshop/Home/change_password.dart';
+import 'package:flowshop/Home/seller_orders.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
 import 'package:flowshop/models/seller_model.dart';
 import 'package:flowshop/models/user_model.dart';
@@ -105,7 +106,7 @@ class _MyDrawerState extends State<MyDrawer> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const OrderItems()));
+                            builder: (context) => widget.isSeller? const SellerOrders() : const MyOrders()));
                   },
                 ),
                 if (!widget.isSeller)

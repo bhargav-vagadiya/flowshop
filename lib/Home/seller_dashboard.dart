@@ -83,7 +83,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
           ),
           Expanded(
             child: FutureBuilder<List<ProductModel>?>(
-                future: Provider.of<ProductProvider>(context, listen: true)
+                future: Provider.of<ProductProvider>(context, listen: false)
                     .getProductsBySeller(sellerId: sellerId),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -105,6 +105,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                   builder: (context) => ProductPage(
                                     isSeller: true,
                                     product_id: item[index].id,
+                                    seller_id: item[index].sellerId,
                                     product_name: item[index].name,
                                     flower_type: item[index].flowerType,
                                     image_path: item[index].imageUrl,
@@ -113,6 +114,9 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                     description: item[index].description,
                                   ),
                                 ));
+                            setState(() {
+
+                            });
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(
@@ -134,7 +138,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                                 BorderRadius.circular(20),
                                             image: DecorationImage(
                                                 image: NetworkImage(
-                                                    "${item![index].imageUrl}")))),
+                                                    "${item[index].imageUrl}")))),
                                   ),
                                   Expanded(
                                     child: Column(
@@ -144,13 +148,13 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                           MainAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "${item![index].name}",
+                                          "${item[index].name}",
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         Text(
-                                          "${item![index].description}",
+                                          "${item[index].description}",
                                           maxLines: 2,
                                           softWrap: true,
                                           overflow: TextOverflow.ellipsis,

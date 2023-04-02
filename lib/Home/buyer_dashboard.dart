@@ -303,6 +303,7 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
                                     Get.to(ProductPage(
                                       isSeller: false,
                                       product_id: result[index].id,
+                                      seller_id: result[index].sellerId,
                                       product_name: result[index].name,
                                       flower_type: result[index].flowerType,
                                       image_path: result[index].imageUrl,

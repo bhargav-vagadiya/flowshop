@@ -13,24 +13,24 @@ String cartModelToJson(List<CartModel> data) => json.encode(List<dynamic>.from(d
 class CartModel {
     CartModel({
         required this.id,
-        required this.userId,
-        required this.cartQuantity,
+        required this.cartId,
+        required this.quantity,
         required this.createdAt,
         required this.updatedAt,
         required this.product,
     });
 
     final int id;
-    final int userId;
-    final int cartQuantity;
+    final int cartId;
+    final int quantity;
     final DateTime createdAt;
     final DateTime updatedAt;
     final ProductModel product;
 
     factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
         id: json["id"],
-        userId: json["user_id"],
-        cartQuantity: json["cart_quantity"],
+        cartId: json["cart_id"],
+        quantity: json["quantity"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         product: ProductModel.fromJson(json["product"]),
@@ -38,8 +38,8 @@ class CartModel {
 
     Map<String, dynamic> toJson() => {
         "id": id,
-        "user_id": userId,
-        "cart_quantity": cartQuantity,
+        "cart_id": cartId,
+        "quantity": quantity,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "product": product.toJson(),

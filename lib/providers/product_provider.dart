@@ -27,6 +27,13 @@ class ProductProvider extends ChangeNotifier {
     return products;
   }
 
+  Future<List<ProductModel>?> searchProducts(
+      {required String name}) async {
+    var products = await ProductHandler.searchProducts(name: name);
+    log(products.toString(), name: "seller wise product");
+    return products;
+  }
+
   Future<bool> addProduct(ProductModel productModel) async {
     bool result = await ProductHandler.addProduct(productModel);
     if (result) {

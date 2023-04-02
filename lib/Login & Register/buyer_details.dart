@@ -1,15 +1,14 @@
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flowshop/DbHelper/DbHelper.dart';
 import 'package:flowshop/Login%20&%20Register/Login.dart';
+import 'package:flowshop/Login%20&%20Register/add_location.dart';
 import 'package:flowshop/models/user_model.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
-import 'package:location/location.dart' as loc;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -198,7 +197,13 @@ class _BuyerDetailsState extends State<BuyerDetails> {
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                                 suffixIcon: IconButton(
-                                    onPressed: () async {},
+                                    onPressed: () async {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddAddress()));
+                                    },
                                     icon: Icon(
                                       Icons.location_on,
                                       color: Colors.white.withOpacity(0.50),
