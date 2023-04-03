@@ -66,4 +66,35 @@ class ProductHandler {
       return false;
     }
   }
+
+  static Future<bool> updateProductToOutOfStock(int productID) async {
+    var response =
+    await dio.put("/products/${productID}",queryParameters: {
+      "quantity":0
+    });
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<bool> deleteProduct(int productID) async {
+    Response<dynamic>? response;
+    try {
+      response = await dio.delete("/products/$productID");
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+
+        return false;
+      }
+    } catch (e) {
+
+        updateProductToOutOfStock(productID);
+
+      log(e.toString());
+     return false;
+    }
+  }
 }

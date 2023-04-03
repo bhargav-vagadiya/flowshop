@@ -10,7 +10,6 @@ import 'package:flowshop/Home/Search.dart';
 import 'package:flowshop/Login%20&%20Register/buyer_details.dart';
 import 'package:flowshop/models/product_model.dart';
 import 'package:flowshop/providers/product_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -69,6 +68,7 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
         ),
         backgroundColor: bgcolor,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
             icon: Image.asset(drawerIcon),

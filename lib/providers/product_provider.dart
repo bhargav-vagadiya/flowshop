@@ -51,4 +51,13 @@ class ProductProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> deleteProduct(int productID) async {
+    bool result = await ProductHandler.deleteProduct(productID);
+    if (result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

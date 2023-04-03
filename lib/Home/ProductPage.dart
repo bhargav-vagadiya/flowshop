@@ -60,6 +60,7 @@ class _ProductPageState extends State<ProductPage> {
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
             onPressed: () {
@@ -67,7 +68,7 @@ class _ProductPageState extends State<ProductPage> {
             },
             icon: Image.asset("images/icons/arrow-backward.webp")),
         actions: [
-          IconButton(
+         if(!widget.isSeller)  IconButton(
               onPressed: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => Cart()));
@@ -158,33 +159,35 @@ class _ProductPageState extends State<ProductPage> {
                                         minimumSize: Size(200, 60)),
                                     onPressed: () async {
                                       if (!widget.isSeller) {
-                                        print(count);
-                                        var item = await context
-                                            .read<CartProvider>()
-                                            .getCart();
+                                        if (widget.qty! > 0) {
+                                          print(count);
+                                          var item = await context
+                                              .read<CartProvider>()
+                                              .getCart();
 
-                                        var cartItem = item!.firstWhereOrNull(
-                                            (element) =>
-                                                element.product.id ==
-                                                widget.product_id);
-                                        if (cartItem != null) {
-                                          for (int i = 0; i < count; i++) {
+                                          var cartItem = item!.firstWhereOrNull(
+                                              (element) =>
+                                                  element.product.id ==
+                                                  widget.product_id);
+                                          if (cartItem != null) {
+                                            for (int i = 0; i < count; i++) {
+                                              await context
+                                                  .read<CartProvider>()
+                                                  .addCartQuantity(
+                                                      cartId: cartItem.id);
+                                            }
+                                          } else {
                                             await context
                                                 .read<CartProvider>()
-                                                .addCartQuantity(
-                                                    cartId: cartItem.id);
+                                                .addProductInCart(
+                                                    productId: widget.product_id!,
+                                                    quantity: count,sellerId: widget.seller_id!);
                                           }
-                                        } else {
-                                          await context
-                                              .read<CartProvider>()
-                                              .addProductInCart(
-                                                  productId: widget.product_id!,
-                                                  quantity: count,sellerId: widget.seller_id!);
-                                        }
 
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) => Cart()));
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) => Cart()));
+                                        }
                                       } else {
                                         var sellerId =
                                             await UserHandler.getSellerId();
@@ -212,8 +215,9 @@ class _ProductPageState extends State<ProductPage> {
                                     },
                                     child: Text(
                                       widget.isSeller
-                                          ? "Update Product"
-                                          : "Add to Cart",
+                                          ? "Update Product" :
+                                            widget.qty! > 0 ?
+                                           "Add to Cart" : "Out of Stock",
                                       style: TextStyle(
                                           fontSize: 25, color: creamColor),
                                     ))),

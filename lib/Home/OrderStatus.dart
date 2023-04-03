@@ -100,6 +100,7 @@ class _MyOrderState extends State<MyOrder> {
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text(
           "Order Status",
           style: TextStyle(color: darkbrown, fontWeight: FontWeight.bold),

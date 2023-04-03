@@ -37,6 +37,7 @@ class _MyOrdersState extends State<MyOrders> {
       child: Scaffold(
         backgroundColor: bgcolor,
         appBar: AppBar(
+
           backgroundColor: Colors.white,
           title: Text(
             "My Orders",

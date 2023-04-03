@@ -25,7 +25,7 @@ class _CartState extends State<Cart> {
   List<CartModel>? item = [];
   List count = [];
   num subtotal = 0;
-  List<String> paymentMethod = ["Cash","Online"];
+  List<String> paymentMethod = ["Cash", "Online"];
   String selectedPaymentMethod = "Cash";
 
   getcartItem() async {
@@ -58,6 +58,7 @@ class _CartState extends State<Cart> {
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text(
           "Cart",
           style: TextStyle(color: darkbrown, fontWeight: FontWeight.bold),
@@ -254,11 +255,11 @@ class _CartState extends State<Cart> {
                                       right: 15,
                                       child: GestureDetector(
                                         onTap: () async {
-                                          // await DbHelper.removeCartProduct(
-                                          //     item[index]['product_id'],
-                                          //     await DbHelper.getUserId(),
-                                          //     count[index]);
-                                          // getcartItem();
+                                          await context
+                                              .read<CartProvider>()
+                                              .removeCartItem(
+                                                  cartId: item[index].id);
+                                          setState(() {});
                                         },
                                         child: Container(
                                           height: 17,
@@ -281,7 +282,8 @@ class _CartState extends State<Cart> {
                     ),
                     Expanded(
                         child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 25) ,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 25),
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
                           color: creamColor,
@@ -294,132 +296,155 @@ class _CartState extends State<Cart> {
                           Stack(children: [
                             const Text(
                               "Sub Total",
-                              style:
-                                  TextStyle(color: darkbrown, fontSize: 20),
+                              style: TextStyle(color: darkbrown, fontSize: 20),
                             ),
                             Align(
                               alignment: Alignment.topRight,
                               child: Text(
                                 "$curruncy${subtotal.toDouble()}",
                                 style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             )
                           ]),
-                          SizedBox(height: 20.h,),
+                          SizedBox(
+                            height: 20.h,
+                          ),
                           Stack(children: [
                             const Text(
                               "Shipping Charge",
-                              style:
-                                  TextStyle(color: darkbrown, fontSize: 20),
+                              style: TextStyle(color: darkbrown, fontSize: 20),
                             ),
                             const Align(
                               alignment: Alignment.topRight,
                               child: Text(
                                 "${curruncy}10.0",
                                 style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             )
                           ]),
-                          SizedBox(height: 10.h,),
+                          SizedBox(
+                            height: 10.h,
+                          ),
                           const Divider(
                             thickness: 2,
                           ),
-                          SizedBox(height: 10.h,),
+                          SizedBox(
+                            height: 10.h,
+                          ),
                           Stack(children: [
                             const Text(
                               "Bag Total",
-                              style:
-                                  TextStyle(color: darkbrown, fontSize: 20),
+                              style: TextStyle(color: darkbrown, fontSize: 20),
                             ),
                             Align(
                               alignment: Alignment.topRight,
                               child: Text(
                                 "$curruncy${subtotal + 10.00}",
                                 style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             )
                           ]),
-                          SizedBox(height: 30.h,),
+                          SizedBox(
+                            height: 30.h,
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
                                 "Payment Method",
                                 style:
-                                TextStyle(color: darkbrown, fontSize: 20),
+                                    TextStyle(color: darkbrown, fontSize: 20),
                               ),
-                              DropdownButton<String>(value: selectedPaymentMethod,items: paymentMethod.map((e) => DropdownMenuItem(value: e,child: Text(e),)).toList(), onChanged: (value){
-                                setState(() {
-                                  selectedPaymentMethod = value!;
-                                });
-                              })
+                              DropdownButton<String>(
+                                  value: selectedPaymentMethod,
+                                  items: paymentMethod
+                                      .map((e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(e),
+                                          ))
+                                      .toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedPaymentMethod = value!;
+                                    });
+                                  })
                             ],
                           ),
                           const Expanded(child: SizedBox()),
-                          selectedPaymentMethod=="Online"? GooglePayButton(
-                            paymentConfigurationAsset: "payment_config/config.json",
-                            width: MediaQuery.of(context).size.width,
-                            onError: (error) {
-                              log(error.toString(),error: true);
-                            },
-                            paymentItems: [PaymentItem(amount: "${subtotal+10.0}",label: "Flower",status: PaymentItemStatus.final_price,type: PaymentItemType.total)],
-                            type: GooglePayButtonType.pay,
-                            margin: const EdgeInsets.only(top: 15.0),
-                            onPaymentResult: (result) async{
-                              log(result.toString());
-                              var status = await context
-                                  .read<OrderProvider>()
-                                  .placeOrder(
-                                  totalProductPrice: subtotal.toDouble(),
-                                  shippingCharge: 10.0);
-                              setState(() {});
-                              if (status) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const MyOrders()));
-                              }
-                            },
-                            loadingIndicator: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          ):
-                          ElevatedButton(
-                            onPressed: () async {
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => MyOrder(
-                              //               orderId: orderId,
-                              //             )));
-                              var result = await context
-                                  .read<OrderProvider>()
-                                  .placeOrder(
-                                      totalProductPrice: subtotal.toDouble(),
-                                      shippingCharge: 10.0);
-                              setState(() {});
-                              if (result) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const MyOrders()));
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                                minimumSize: Size(
-                                    MediaQuery.of(context).size.width, 50)),
-                            child: const Text(
-                              "Proceed To Checkout",
-                              style:
-                                  TextStyle(fontSize: 25, color: creamColor),
-                            ),
-                          )
+                          selectedPaymentMethod == "Online"
+                              ? GooglePayButton(
+                                  paymentConfigurationAsset:
+                                      "payment_config/config.json",
+                                  width: MediaQuery.of(context).size.width,
+                                  onError: (error) {
+                                    log(error.toString(), error: true);
+                                  },
+                                  paymentItems: [
+                                    PaymentItem(
+                                        amount: "${subtotal + 10.0}",
+                                        label: "Flower",
+                                        status: PaymentItemStatus.final_price,
+                                        type: PaymentItemType.total)
+                                  ],
+                                  type: GooglePayButtonType.pay,
+                                  margin: const EdgeInsets.only(top: 15.0),
+                                  onPaymentResult: (result) async {
+                                    log(result.toString());
+                                    var status = await context
+                                        .read<OrderProvider>()
+                                        .placeOrder(
+                                            totalProductPrice:
+                                                subtotal.toDouble(),
+                                            shippingCharge: 10.0);
+                                    setState(() {});
+                                    if (status) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const MyOrders()));
+                                    }
+                                  },
+                                  loadingIndicator: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: () async {
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) => MyOrder(
+                                    //               orderId: orderId,
+                                    //             )));
+                                    var result = await context
+                                        .read<OrderProvider>()
+                                        .placeOrder(
+                                            totalProductPrice:
+                                                subtotal.toDouble(),
+                                            shippingCharge: 10.0);
+                                    setState(() {});
+                                    if (result) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const MyOrders()));
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(
+                                          MediaQuery.of(context).size.width,
+                                          50)),
+                                  child: const Text(
+                                    "Proceed To Checkout",
+                                    style: TextStyle(
+                                        fontSize: 25, color: creamColor),
+                                  ),
+                                )
                         ],
                       ),
                     ))

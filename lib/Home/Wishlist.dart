@@ -38,6 +38,7 @@ class _WishlistState extends State<Wishlist> {
     return Scaffold(
       backgroundColor: bgcolor,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text(
           "Wishlist",
           style: TextStyle(color: darkbrown, fontWeight: FontWeight.bold),

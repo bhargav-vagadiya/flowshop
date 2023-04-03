@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:flowshop/api_handler/user_handler.dart';
 import 'package:flowshop/models/order_model.dart';
 
+import '../models/seller_model.dart';
+import '../models/seller_order_model.dart';
 import 'dio_config.dart';
 
 class OrderHandler{
@@ -32,6 +34,22 @@ class OrderHandler{
       await dio.get("/orders/${await UserHandler.getUserId()}");
       if (response.statusCode == 200) {
         return orderModelFromJson(jsonEncode(response.data));
+      }
+    } catch (e, s) {
+      log(e.toString(), name: "order get api error");
+      log(s.toString());
+    }
+    return null;
+  }
+
+  static Future<List<SellerOrderModel>?> gerOrderSellerWise() async{
+    try {
+      var response =
+      await dio.get("/orders/",queryParameters: {
+        "seller_id":await UserHandler.getSellerId()
+      });
+      if (response.statusCode == 200) {
+        return sellerOrderModelFromJson(jsonEncode(response.data));
       }
     } catch (e, s) {
       log(e.toString(), name: "order get api error");

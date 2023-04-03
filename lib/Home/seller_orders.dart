@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../models/seller_order_model.dart';
+
 class SellerOrders extends StatefulWidget {
   const SellerOrders({Key? key}) : super(key: key);
 
@@ -48,18 +50,10 @@ class _SellerOrdersState extends State<SellerOrders> {
                 Navigator.pop(context);
               },
               icon: Image.asset("images/icons/arrow-backward.webp")),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  //Navigator.pop(context);
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => Cart()));
-                },
-                icon: Image.asset("images/icons/md-cart.webp"))
-          ],
+
         ),
-        body: FutureBuilder<List<OrderModel>?>(
-            future: context.read<OrderProvider>().getOrder(),
+        body: FutureBuilder<List<SellerOrderModel>?>(
+            future: context.read<OrderProvider>().getOrderSellerWise(),
             builder: (context, snapshot) {
               if(snapshot.hasData && snapshot.data!.isNotEmpty) {
                 var item = snapshot.data!;
@@ -110,6 +104,32 @@ class _SellerOrdersState extends State<SellerOrders> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(time),
+                                    Divider(
+                                      thickness: 5,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text("User name: "),
+                                        Text(item[index].cart.user.firstName + " " + item[index].cart.user.lastName),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("Address: "),
+                                        Expanded(child: Text(item[index].cart.user.address)),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text("Email: "),
+                                        Text(item[index].cart.user.email),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10,),
                                     Divider(
                                       thickness: 5,
                                     ),
@@ -170,7 +190,7 @@ class _SellerOrdersState extends State<SellerOrders> {
                                         Text("Total:"),
                                         Expanded(child: SizedBox()),
                                         Text(
-                                            "$curruncy${item[index].totalProductPrice + item[index].shippingCharge}")
+                                            "$curruncy${item[index].totalProductPrice??0.0 + item[index].shippingCharge!}")
                                       ],
                                     ),
                                     //Expanded(child: SizedBox()),

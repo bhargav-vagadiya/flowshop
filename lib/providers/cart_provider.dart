@@ -36,4 +36,9 @@ class CartProvider extends ChangeNotifier {
     var result = await CartHandler.removeCartQuantity(cartId: cartId);
     return result;
   }
+
+  Future<bool> removeCartItem({required int cartId}) async {
+    var result = await CartHandler.removeCartItem(cartId: cartId);
+    return result;
+  }
 }

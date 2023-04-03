@@ -62,6 +62,7 @@ class _AddProductState extends State<AddProduct> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text(
           "Add Product",
           style: TextStyle(color: darkbrown, fontWeight: FontWeight.bold),
@@ -100,11 +101,11 @@ class _AddProductState extends State<AddProduct> {
                             radius: 50.r,
                             backgroundColor: creamColor,
                             foregroundImage: image(),
-                            child: Icon(
+                             child: imagePath == ""? Icon(
                               Icons.image,
                               color: brown,
                               size: 50.sp,
-                            )),
+                            ):null),
                         if (imagePath == "")
                           Align(
                             alignment: Alignment.bottomRight,

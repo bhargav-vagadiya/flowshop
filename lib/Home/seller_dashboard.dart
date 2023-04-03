@@ -10,6 +10,7 @@ import 'package:flowshop/models/product_model.dart';
 import 'package:flowshop/providers/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -42,6 +43,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
       backgroundColor: Colors.white,
       key: _scafffold,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: Image.asset(drawerIcon),
@@ -98,6 +100,31 @@ class _SellerDashboardState extends State<SellerDashboard> {
                       itemCount: item!.length,
                       itemBuilder: (context, index) {
                         return InkWell(
+                          onLongPress: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title:
+                                          Text("You want to delete This Item?"),
+                                      actions: [
+                                        OutlinedButton(
+                                            onPressed: () async{
+                                             var result = await context.read<ProductProvider>().deleteProduct(item[index].id);
+                                             if(result){
+                                               Fluttertoast.showToast(msg: "Product Deleted Successfully");
+                                             }else{
+                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You can't delete product, because your product is in cart or orders. But now no customer can order your product.")));
+                                               // Fluttertoast.showToast(msg: "You can't delete product, because your product is in cart or orders. But now no customer can order your product.");
+                                             }
+                                             Navigator.pop(context);
+                                            }, child: Text("Yes")),
+                                        OutlinedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }, child: Text("No")),
+                                      ],
+                                    ));
+                          },
                           onTap: () async {
                             await Navigator.push(
                                 context,
@@ -114,9 +141,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                     description: item[index].description,
                                   ),
                                 ));
-                            setState(() {
-
-                            });
+                            setState(() {});
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(

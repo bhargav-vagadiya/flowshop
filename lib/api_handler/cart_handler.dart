@@ -71,4 +71,18 @@ class CartHandler {
     }
     return false;
   }
+
+  static Future<bool> removeCartItem({required int cartId}) async{
+    try {
+      var response =
+      await dio.delete("/cart_items/$cartId");
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e, s) {
+      log(e.toString(), name: "cart delete api error");
+      log(s.toString());
+    }
+    return false;
+  }
 }

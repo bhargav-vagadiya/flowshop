@@ -8,7 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -46,6 +48,16 @@ class _BuyerDetailsState extends State<BuyerDetails> {
     address.text = userData.address;
     email.text = userData.email;
     password.text = userData.password;
+  }
+
+  Future<LatLng> getCurrentLocation() async {
+    await Geolocator.requestPermission()
+        .then((value) => null)
+        .onError((error, stackTrace) async {
+      await Geolocator.requestPermission();
+    });
+    var position = await Geolocator.getCurrentPosition();
+    return LatLng(position.latitude, position.longitude);
   }
 
   @override
@@ -198,11 +210,16 @@ class _BuyerDetailsState extends State<BuyerDetails> {
                             decoration: InputDecoration(
                                 suffixIcon: IconButton(
                                     onPressed: () async {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddAddress()));
+                                      String address = "";
+                                      address = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AddAddress(),
+                                        ),
+                                      );
+                                      if (address != "") {
+                                        this.address.text = address;
+                                      }
                                     },
                                     icon: Icon(
                                       Icons.location_on,

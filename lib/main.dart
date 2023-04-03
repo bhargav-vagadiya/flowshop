@@ -1,24 +1,26 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flowshop/Constants/Constant.dart';
-import 'package:flowshop/DbHelper/DbHelper.dart';
-import 'package:flowshop/Login%20&%20Register/add_location.dart';
 import 'package:flowshop/Splash/Splash.dart';
 import 'package:flowshop/providers/cart_provider.dart';
 import 'package:flowshop/providers/order_provider.dart';
 import 'package:flowshop/providers/product_provider.dart';
 import 'package:flowshop/providers/user_provider.dart';
 import 'package:flowshop/providers/wishlist_provider.dart';
-import 'package:flowshop/role_selection_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() async {
+  if(Platform.isAndroid) {
+    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
+  }
   // FlutterError.onError = (details) {
   //   if (kDebugMode) {
   //     print("\x1B[33mwidget\x1B[0m");
@@ -73,7 +75,7 @@ class MyApp extends StatelessWidget {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(brown))),
                 colorScheme:
-                    ColorScheme.fromSwatch().copyWith(primary: Colors.white),
+                    ColorScheme.fromSwatch().copyWith(primary: brown),
                 pageTransitionsTheme: const PageTransitionsTheme(builders: {
                   TargetPlatform.android: CupertinoPageTransitionsBuilder()
                 }),
