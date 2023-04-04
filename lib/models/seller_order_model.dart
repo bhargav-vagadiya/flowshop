@@ -4,9 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:flowshop/models/cart_model.dart';
-import 'package:flowshop/models/user_model.dart';
-
 import 'order_model.dart';
 
 List<SellerOrderModel> sellerOrderModelFromJson(String str) => List<SellerOrderModel>.from(json.decode(str).map((x) => SellerOrderModel.fromJson(x)));
@@ -16,8 +13,8 @@ String sellerOrderModelToJson(List<SellerOrderModel> data) => json.encode(List<d
 class SellerOrderModel {
   SellerOrderModel({
     required this.id,
-    this.totalProductPrice,
-    this.shippingCharge,
+    required this.totalProductPrice,
+    required this.shippingCharge,
     required this.buyingTime,
     this.orderReceivedTime,
     this.orderConfirmTime,
@@ -30,12 +27,12 @@ class SellerOrderModel {
   });
 
   final int id;
-  final double? totalProductPrice;
-  final double? shippingCharge;
+  final double totalProductPrice;
+  final double shippingCharge;
   final DateTime buyingTime;
-  final DateTime? orderReceivedTime;
-  final DateTime? orderConfirmTime;
-  final DateTime? outOfDeliveryTime;
+  final dynamic orderReceivedTime;
+  final dynamic orderConfirmTime;
+  final dynamic outOfDeliveryTime;
   final int cartId;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -47,9 +44,9 @@ class SellerOrderModel {
     totalProductPrice: json["total_product_price"],
     shippingCharge: json["shipping_charge"],
     buyingTime: DateTime.parse(json["buying_time"]),
-    orderReceivedTime: json["order_received_time"] == null ? null : DateTime.parse(json["order_received_time"]),
-    orderConfirmTime: json["order_confirm_time"] == null ? null : DateTime.parse(json["order_confirm_time"]),
-    outOfDeliveryTime: json["out_of_delivery_time"] == null ? null : DateTime.parse(json["out_of_delivery_time"]),
+    orderReceivedTime: json["order_received_time"],
+    orderConfirmTime: json["order_confirm_time"],
+    outOfDeliveryTime: json["out_of_delivery_time"],
     cartId: json["cart_id"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
@@ -62,13 +59,13 @@ class SellerOrderModel {
     "total_product_price": totalProductPrice,
     "shipping_charge": shippingCharge,
     "buying_time": buyingTime.toIso8601String(),
-    "order_received_time": orderReceivedTime?.toIso8601String(),
-    "order_confirm_time": orderConfirmTime?.toIso8601String(),
-    "out_of_delivery_time": outOfDeliveryTime?.toIso8601String(),
+    "order_received_time": orderReceivedTime,
+    "order_confirm_time": orderConfirmTime,
+    "out_of_delivery_time": outOfDeliveryTime,
     "cart_id": cartId,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
-    "ordered_items": List<dynamic>.from(orderedItems.map((x) => x.toJson())),
+    "ordered_items": List<dynamic>.from(orderedItems.map((x) => x.toJson(isSeller: true))),
     "cart": cart.toJson(),
   };
 }
@@ -88,7 +85,6 @@ class Cart {
     "user": user.toJson(),
   };
 }
-
 
 class User {
   User({

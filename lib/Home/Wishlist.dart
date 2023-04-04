@@ -98,14 +98,7 @@ class _WishlistState extends State<Wishlist> {
                     onTap: () async {
                       await Get.to(ProductPage(
                         isSeller: false,
-                        product_id: item![index].product.id,
-                        seller_id: item![index].product.sellerId,
-                        product_name: item![index].product.name,
-                        flower_type: item![index].product.flowerType,
-                        image_path: item![index].product.imageUrl,
-                        qty: item![index].product.quantity,
-                        price: item![index].product.price,
-                        description: item![index].product.description,
+                        productModel: item![index].product
                       ));
                       if (mounted) {
                         getData();

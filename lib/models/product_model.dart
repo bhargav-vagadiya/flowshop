@@ -32,7 +32,7 @@ class ProductModel {
   final int quantity;
   final double price;
   final int sellerId;
-  final dynamic rating;
+  final double? rating;
   final String? imageUrl;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
@@ -58,6 +58,18 @@ class ProductModel {
         "rating": rating,
         "image": MultipartFile.fromFileSync(imageUrl!),
       };
+
+  Map<String, dynamic> toJsonFromSellerOrderModel() => {
+    "id": id,
+    "name": name,
+    "description": description,
+    "flower_type": flowerType,
+    "quantity": quantity,
+    "price": price,
+    "seller_id": sellerId,
+    "rating": rating,
+    "image_url": imageUrl,
+  };
 
   Map<String, dynamic> toJsonWithoutImage() => {
     "id": id,

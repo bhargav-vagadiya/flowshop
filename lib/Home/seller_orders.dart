@@ -90,7 +90,7 @@ class _SellerOrdersState extends State<SellerOrders> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            MyOrder(orderId: item[index].id)));
+                                            MyOrder(orderId: item[index].id,isSeller: true,)));
                               },
                               child: Container(
                                 //    constraints: BoxConstraints(maxHeight: 130,),
@@ -190,7 +190,7 @@ class _SellerOrdersState extends State<SellerOrders> {
                                         Text("Total:"),
                                         Expanded(child: SizedBox()),
                                         Text(
-                                            "$curruncy${item[index].totalProductPrice??0.0 + item[index].shippingCharge!}")
+                                            "$curruncy${item[index].totalProductPrice! + item[index].shippingCharge!}")
                                       ],
                                     ),
                                     //Expanded(child: SizedBox()),

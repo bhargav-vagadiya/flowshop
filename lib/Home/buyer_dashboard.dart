@@ -301,15 +301,9 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
                                 child: GestureDetector(
                                   onTap: () {
                                     Get.to(ProductPage(
+                                      productModel: result[index],
                                       isSeller: false,
-                                      product_id: result[index].id,
-                                      seller_id: result[index].sellerId,
-                                      product_name: result[index].name,
-                                      flower_type: result[index].flowerType,
-                                      image_path: result[index].imageUrl,
-                                      qty: result[index].quantity,
-                                      price: result[index].price,
-                                      description: result[index].description,
+
                                     ));
                                   },
                                   child: Stack(children: [

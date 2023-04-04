@@ -131,14 +131,8 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                 MaterialPageRoute(
                                   builder: (context) => ProductPage(
                                     isSeller: true,
-                                    product_id: item[index].id,
-                                    seller_id: item[index].sellerId,
-                                    product_name: item[index].name,
-                                    flower_type: item[index].flowerType,
-                                    image_path: item[index].imageUrl,
-                                    qty: item[index].quantity,
-                                    price: item[index].price,
-                                    description: item[index].description,
+                                    productModel: item[index],
+
                                   ),
                                 ));
                             setState(() {});

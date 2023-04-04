@@ -6,7 +6,7 @@ import 'dart:convert';
 
 import 'package:flowshop/models/product_model.dart';
 
-List<OrderModel> orderModelFromJson(String str) => List<OrderModel>.from(json.decode(str).map((x) => OrderModel.fromJson(x)));
+List<OrderModel> orderModelFromJson(String str,{bool isSeller=false}) => List<OrderModel>.from(json.decode(str).map((x) => OrderModel.fromJson(x)));
 
 String orderModelToJson(List<OrderModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
@@ -95,13 +95,13 @@ class OrderedItem {
     product: ProductModel.fromJson(json["product"]),
   );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson({bool isSeller=false}) => {
     "id": id,
     "product_id": productId,
     "quantity": quantity,
     "order_id": orderId,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
-    "product": product.toJson(),
+    "product": isSeller==true? product.toJsonFromSellerOrderModel() : product.toJson(),
   };
 }

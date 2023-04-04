@@ -7,27 +7,19 @@ import 'package:flowshop/models/product_model.dart';
 import 'package:flowshop/providers/cart_provider.dart';
 import 'package:flowshop/providers/wishlist_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
+import 'feedback_list.dart';
+
 class ProductPage extends StatefulWidget {
-  String? product_name, image_path, flower_type, description;
-  int? product_id,seller_id, qty;
-  double? price;
+  ProductModel productModel;
   bool isSeller;
 
-  ProductPage(
-      {Key? key,
-      required this.isSeller,
-      required this.product_id,
-      required this.seller_id,
-      required this.product_name,
-      required this.flower_type,
-      required this.image_path,
-      required this.qty,
-      required this.price,
-      required this.description})
+  ProductPage({Key? key, required this.isSeller, required this.productModel})
       : super(key: key);
 
   @override
@@ -40,10 +32,10 @@ class _ProductPageState extends State<ProductPage> {
 
   favoriteOrNot() async {
     // isfavorite = await DbHelper.productInWishlist(
-    //     widget.product_id, await DbHelper.getUserId());
+    //     widget.productModel.id, await DbHelper.getUserId());
     isfavorite = await context
         .read<WishListProvider>()
-        .productInWishlist(productId: widget.product_id!);
+        .productInWishlist(productId: widget.productModel.id);
     print(isfavorite);
     setState(() {});
   }
@@ -68,13 +60,14 @@ class _ProductPageState extends State<ProductPage> {
             },
             icon: Image.asset("images/icons/arrow-backward.webp")),
         actions: [
-         if(!widget.isSeller)  IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Cart()));
-                //Navigator.pop(context);
-              },
-              icon: Image.asset("images/icons/md-cart.webp"))
+          if (!widget.isSeller)
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => Cart()));
+                  //Navigator.pop(context);
+                },
+                icon: Image.asset("images/icons/md-cart.webp"))
         ],
       ),
       body: Stack(
@@ -99,7 +92,7 @@ class _ProductPageState extends State<ProductPage> {
                     Padding(
                       padding: const EdgeInsets.only(right: 50, left: 30),
                       child: Text(
-                        "${widget.product_name}",
+                        "${widget.productModel.name}",
                         style: const TextStyle(
                             color: darkbrown,
                             fontSize: 30,
@@ -113,7 +106,7 @@ class _ProductPageState extends State<ProductPage> {
                       padding: const EdgeInsets.only(right: 50, left: 30),
                       child: SingleChildScrollView(
                           child: Text(
-                        "${widget.description}",
+                        "${widget.productModel.description}",
                         softWrap: true,
                         style: TextStyle(
                             fontSize: 12,
@@ -121,7 +114,78 @@ class _ProductPageState extends State<ProductPage> {
                             fontWeight: FontWeight.bold),
                       )),
                     ),
-                    const Expanded(child: SizedBox()),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>  FeedBackList(
+                                    productId: widget.productModel.id,
+                                  ))),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 28.0, right: 10),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Feedbacks",
+                                  style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Spacer(),
+                                Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  size: 20,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RatingBar.builder(
+                                  initialRating:
+                                      widget.productModel.rating ?? 0,
+                                  minRating: widget.productModel.rating ?? 0,
+                                  maxRating: widget.productModel.rating ?? 0,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  tapOnlyMode: true,
+                                  itemCount: 5,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 4.0),
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: brown,
+                                  ),
+                                  onRatingUpdate: (rating) {},
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    "${widget.productModel.rating?.toStringAsFixed(1) ?? '0'}/5.0",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(child: SizedBox()),
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
@@ -143,7 +207,7 @@ class _ProductPageState extends State<ProductPage> {
                                         fontSize: 18),
                                   ),
                                   Text(
-                                    "$curruncy${widget.price}",
+                                    "$curruncy${widget.productModel.price}",
                                     style: TextStyle(
                                         fontSize: 25,
                                         color: Colors.black,
@@ -159,7 +223,7 @@ class _ProductPageState extends State<ProductPage> {
                                         minimumSize: Size(200, 60)),
                                     onPressed: () async {
                                       if (!widget.isSeller) {
-                                        if (widget.qty! > 0) {
+                                        if (widget.productModel.quantity! > 0) {
                                           print(count);
                                           var item = await context
                                               .read<CartProvider>()
@@ -168,7 +232,7 @@ class _ProductPageState extends State<ProductPage> {
                                           var cartItem = item!.firstWhereOrNull(
                                               (element) =>
                                                   element.product.id ==
-                                                  widget.product_id);
+                                                  widget.productModel.id);
                                           if (cartItem != null) {
                                             for (int i = 0; i < count; i++) {
                                               await context
@@ -180,13 +244,18 @@ class _ProductPageState extends State<ProductPage> {
                                             await context
                                                 .read<CartProvider>()
                                                 .addProductInCart(
-                                                    productId: widget.product_id!,
-                                                    quantity: count,sellerId: widget.seller_id!);
+                                                    productId:
+                                                        widget.productModel.id!,
+                                                    quantity: count,
+                                                    sellerId: widget
+                                                        .productModel
+                                                        .sellerId!);
                                           }
 
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                  builder: (context) => Cart()));
+                                                  builder: (context) =>
+                                                      Cart()));
                                         }
                                       } else {
                                         var sellerId =
@@ -198,26 +267,35 @@ class _ProductPageState extends State<ProductPage> {
                                                       isUpdate: true,
                                                       productModel: ProductModel(
                                                           id: widget
-                                                              .product_id!,
+                                                              .productModel.id!,
                                                           name: widget
-                                                              .product_name!,
+                                                              .productModel
+                                                              .name!,
                                                           description: widget
-                                                              .description!,
+                                                              .productModel!
+                                                              .description,
                                                           flowerType: widget
-                                                              .flower_type!,
-                                                          quantity: widget.qty!,
-                                                          price: widget.price!,
+                                                              .productModel
+                                                              .flowerType,
+                                                          quantity: widget
+                                                              .productModel
+                                                              .quantity!,
+                                                          price: widget
+                                                              .productModel
+                                                              .price!,
                                                           sellerId: sellerId,
                                                           imageUrl: widget
-                                                              .image_path),
+                                                              .productModel
+                                                              .imageUrl),
                                                     )));
                                       }
                                     },
                                     child: Text(
                                       widget.isSeller
-                                          ? "Update Product" :
-                                            widget.qty! > 0 ?
-                                           "Add to Cart" : "Out of Stock",
+                                          ? "Update Product"
+                                          : widget.productModel.quantity! > 0
+                                              ? "Add to Cart"
+                                              : "Out of Stock",
                                       style: TextStyle(
                                           fontSize: 25, color: creamColor),
                                     ))),
@@ -237,7 +315,7 @@ class _ProductPageState extends State<ProductPage> {
                     image:
                         //NetworkImage("https://img.teleflora.com/images/o_0/l_flowers:TEV58-7C,pg_6/w_368,h_460,cs_no_cmyk,c_pad/f_jpg,q_auto:eco,e_sharpen:200/flowers/TEV58-7C/Teleflora'sMidModBrightsBouquetPM?image=9"),
                         NetworkImage(
-                      "${widget.image_path}",
+                      "${widget.productModel.imageUrl}",
                     ),
                     fit: BoxFit.contain)),
           ),
@@ -253,21 +331,22 @@ class _ProductPageState extends State<ProductPage> {
                     onTap: () async {
                       if (await context
                           .read<WishListProvider>()
-                          .productInWishlist(productId: widget.product_id!)) {
+                          .productInWishlist(
+                              productId: widget.productModel.id!)) {
                         var result = await context
                             .read<WishListProvider>()
                             .removeProductFromWishList(
-                                productId: widget.product_id!);
+                                productId: widget.productModel.id!);
 
                         if (result) {
                           isfavorite = false;
                         }
                       } else {
-                        // await DbHelper.addWishlist(widget.product_id, userid);
+                        // await DbHelper.addWishlist(widget.productModel.id, userid);
                         var result = await context
                             .read<WishListProvider>()
                             .addProductInWishList(
-                                productId: widget.product_id!);
+                                productId: widget.productModel.id!);
                         if (result) {
                           isfavorite = true;
                         }
