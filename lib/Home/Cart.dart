@@ -119,7 +119,7 @@ class _CartState extends State<Cart> {
                                                             20),
                                                     image: DecorationImage(
                                                         image: NetworkImage(
-                                                            "http://20.219.59.136:3000/${item[index].product.imageUrl}")))),
+                                                            "${item[index].product.imageUrl}")))),
                                           ),
                                           Expanded(
                                             child: Column(

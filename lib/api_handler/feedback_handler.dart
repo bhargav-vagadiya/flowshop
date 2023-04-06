@@ -6,18 +6,18 @@ import 'package:flowshop/models/feedback_model.dart';
 
 import 'dio_config.dart';
 
-class FeedbackHandler{
+class FeedbackHandler {
   static var dio = DioConfig().dio;
 
   static Future<bool> giveFeedback(
       {required double ratingValue,
-        required String comment,
-        required int productId}) async {
+      required String comment,
+      required int productId}) async {
     try {
       var response = await dio.post("/feedbacks", queryParameters: {
-        "product_id":productId,
+        "product_id": productId,
         "user_id": await UserHandler.getUserId(),
-        "rating_value":ratingValue,
+        "rating_value": ratingValue,
         "comment": comment
       });
       if (response.statusCode == 201) {
@@ -30,9 +30,10 @@ class FeedbackHandler{
     return false;
   }
 
-  static Future<List<FeedbackModel>?> getFeedback({required int productId}) async {
+  static Future<List<FeedbackModel>?> getFeedback(
+      {required int productId}) async {
     try {
-      var response = await dio.get("/feedbacks/$productId");
+      var response = await dio.get("/feedbacks/show/$productId");
       if (response.statusCode == 200) {
         return feedbackModelFromJson(jsonEncode(response.data));
       }

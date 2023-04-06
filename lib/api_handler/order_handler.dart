@@ -34,7 +34,10 @@ class OrderHandler {
     try {
       var response = await dio.get("/orders/${await UserHandler.getUserId()}");
       if (response.statusCode == 200) {
-        return orderModelFromJson(jsonEncode(response.data));
+        log(jsonEncode(response.data));
+        var list = orderModelFromJson(jsonEncode(response.data));
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        return list;
       }
     } catch (e, s) {
       log(e.toString(), name: "order get api error");
@@ -48,7 +51,10 @@ class OrderHandler {
       var response = await dio.get("/orders/",
           queryParameters: {"seller_id": await UserHandler.getSellerId()});
       if (response.statusCode == 200) {
-        return sellerOrderModelFromJson(jsonEncode(response.data));
+        log(jsonEncode(response.data));
+        var list = sellerOrderModelFromJson(jsonEncode(response.data));
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        return list;
       }
     } catch (e, s) {
       log(e.toString(), name: "order get api error");
@@ -79,9 +85,9 @@ class OrderHandler {
       log(e.toString(), name: "receiveOrder api error");
     }
     return false;
+  }
 
-
-  }static Future<bool> deliverOrder({required int orderId}) async {
+  static Future<bool> deliverOrder({required int orderId}) async {
     try {
       var response = await dio.patch("/out_of_delivery_time/$orderId");
       if (response.statusCode == 200) {

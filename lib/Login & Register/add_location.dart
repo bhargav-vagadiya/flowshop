@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flowshop/Constants/Constant.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoder_buddy/geocoder_buddy.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_picker_free/map_picker_free.dart';
@@ -66,30 +65,6 @@ class _AddAddressState extends State<AddAddress> {
                   log(data.address);
                   Navigator.pop(context,data.address);
                 })
-            // GoogleMap(
-            //         compassEnabled: true,
-            //         mapType: MapType.normal,
-            //         initialCameraPosition: cameraPosition!,
-            //         markers: Set<Marker>.from(_markers),
-            //         onMapCreated: (controller) {
-            //           controller.animateCamera(
-            //               CameraUpdate.newCameraPosition(cameraPosition!));
-            //
-            //         },
-            //         onCameraMove: (position) async {
-            //           await Future.delayed(const Duration(milliseconds: 500));
-            //           _markers.add(
-            //             Marker(
-            //                 markerId: const MarkerId('1'),
-            //                 position: position.target,
-            //                 infoWindow: const InfoWindow(
-            //                   title: 'My Position',
-            //                 )),
-            //           );
-            //
-            //           setState(() {});
-            //         },
-            //       )
             : Container());
   }
 }

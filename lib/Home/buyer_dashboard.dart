@@ -7,6 +7,7 @@ import 'package:flowshop/Home/Cart.dart';
 import 'package:flowshop/Home/MyDrawer.dart';
 import 'package:flowshop/Home/ProductPage.dart';
 import 'package:flowshop/Home/Search.dart';
+import 'package:flowshop/Home/product_list.dart';
 import 'package:flowshop/Login%20&%20Register/buyer_details.dart';
 import 'package:flowshop/models/product_model.dart';
 import 'package:flowshop/providers/product_provider.dart';
@@ -66,6 +67,9 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
         drawer: const MyDrawer(
           isSeller: false,
         ),
+        onDrawerChanged: (isOpened) {
+          setState(() {});
+        },
         backgroundColor: bgcolor,
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -78,14 +82,15 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
           ),
           actions: [
             IconButton(
-                onPressed: () {
+                onPressed: () async {
                   // Fluttertoast.showToast(msg: "Feature under development");
-                  Navigator.push(
+                  await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => BuyerDetails(
                                 update: true,
                               )));
+                  setState(() {});
                 },
                 icon: Image.asset(profileIcon))
           ],
@@ -100,8 +105,9 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
-                  onTap: () {
-                    Get.to(const Search(), transition: Transition.fadeIn);
+                  onTap: () async {
+                    await Get.to(const Search(), transition: Transition.fadeIn);
+                    setState(() {});
                   },
                   child: Container(
                     decoration: const BoxDecoration(
@@ -284,6 +290,22 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
               const SizedBox(
                 height: 50,
               ),
+              GestureDetector(
+                onTap: () async {
+                  await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ProductList()));
+                  setState(() {});
+                },
+                child: const Align(
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    "View More >> ",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 180,
                 child: FutureBuilder<List<ProductModel>?>(
@@ -294,17 +316,17 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
                         return ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
-                            itemCount: result.length,
+                            itemCount: 5,
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
-                                  onTap: () {
-                                    Get.to(ProductPage(
+                                  onTap: () async {
+                                    await Get.to(ProductPage(
                                       productModel: result[index],
                                       isSeller: false,
-
                                     ));
+                                    setState(() {});
                                   },
                                   child: Stack(children: [
                                     Padding(

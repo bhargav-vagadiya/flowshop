@@ -100,30 +100,41 @@ class _SellerDashboardState extends State<SellerDashboard> {
                       itemCount: item!.length,
                       itemBuilder: (context, index) {
                         return InkWell(
-                          onLongPress: () {
-                            showDialog(
+                          onLongPress: () async {
+                            await showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
                                       title:
                                           Text("You want to delete This Item?"),
                                       actions: [
                                         OutlinedButton(
-                                            onPressed: () async{
-                                             var result = await context.read<ProductProvider>().deleteProduct(item[index].id);
-                                             if(result){
-                                               Fluttertoast.showToast(msg: "Product Deleted Successfully");
-                                             }else{
-                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You can't delete product, because your product is in cart or orders. But now no customer can order your product.")));
-                                               // Fluttertoast.showToast(msg: "You can't delete product, because your product is in cart or orders. But now no customer can order your product.");
-                                             }
-                                             Navigator.pop(context);
-                                            }, child: Text("Yes")),
+                                            onPressed: () async {
+                                              var result = await context
+                                                  .read<ProductProvider>()
+                                                  .deleteProduct(
+                                                      item[index].id);
+                                              if (result) {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        "Product Deleted Successfully");
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            "You can't delete product, because your product is in cart or orders. But now no customer can order your product.")));
+                                                // Fluttertoast.showToast(msg: "You can't delete product, because your product is in cart or orders. But now no customer can order your product.");
+                                              }
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text("Yes")),
                                         OutlinedButton(
                                             onPressed: () {
                                               Navigator.pop(context);
-                                            }, child: Text("No")),
+                                            },
+                                            child: Text("No")),
                                       ],
                                     ));
+                            setState(() {});
                           },
                           onTap: () async {
                             await Navigator.push(
@@ -132,7 +143,6 @@ class _SellerDashboardState extends State<SellerDashboard> {
                                   builder: (context) => ProductPage(
                                     isSeller: true,
                                     productModel: item[index],
-
                                   ),
                                 ));
                             setState(() {});
@@ -199,12 +209,13 @@ class _SellerDashboardState extends State<SellerDashboard> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const AddProduct(isUpdate: false),
                 ));
+            setState(() {});
           },
           child: const Icon(Icons.add)),
     );

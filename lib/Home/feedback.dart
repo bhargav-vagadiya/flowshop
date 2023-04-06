@@ -94,7 +94,7 @@ class _FeedBackState extends State<FeedBack> {
                                       borderRadius: BorderRadius.circular(20),
                                       image: DecorationImage(
                                           image: NetworkImage(
-                                              "http://20.219.59.136:3000/${item![index]
+                                              "${item![index]
                                                   .imageUrl}")))),
                             ),
                             Expanded(
@@ -174,7 +174,7 @@ class _FeedBackState extends State<FeedBack> {
               await context.read<FeedbackProvider>().addFeedBack(
                   ratingValue: element.ratingValue,
                   comment: element.comment,
-                  productId: element.userId);
+                  productId: element.productId);
             }
             Navigator.pop(context);
           }

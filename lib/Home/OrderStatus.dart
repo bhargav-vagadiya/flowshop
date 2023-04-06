@@ -81,7 +81,8 @@ class _MyOrderState extends State<MyOrder> {
     if (orderDetail!.outOfDeliveryTime != null) {
       DeliveryTime = DateFormat.jm().format(orderDetail!.outOfDeliveryTime!);
     }
-    log(orderDetail!.orderedItems[0].product.imageUrl ?? "null", name: "Hello");
+    log(orderDetail!.orderedItems[0].product.toJson().toString() ?? "null",
+        name: "Hello");
     // print(itemname);
     // print(itemQuantity);
     // print(itemImage);
@@ -161,7 +162,7 @@ class _MyOrderState extends State<MyOrder> {
                                                     BorderRadius.circular(20),
                                                 image: DecorationImage(
                                                     image: NetworkImage(
-                                                        "http://20.219.59.136:3000/${orderDetail!.orderedItems[index].product.imageUrl}")))),
+                                                        "${orderDetail!.orderedItems[index].product.imageUrl}")))),
                                       ),
                                       Expanded(
                                         child: Column(
@@ -231,30 +232,39 @@ class _MyOrderState extends State<MyOrder> {
                                 height: 30,
                               ),
                               GestureDetector(
-                                onTap: () async{
-                                 if (ReceiveOrderTime != null && ConfirmOrderTime !=  null) {
-                                   await context
-                                        .read<OrderProvider>()
-                                        .deliverOrder(orderId: widget.orderId);
-                                 }else if(ReceiveOrderTime != null){
-                                   await context
-                                       .read<OrderProvider>()
-                                       .confirmOrder(orderId: widget.orderId);
-                                   await context
-                                       .read<OrderProvider>()
-                                       .deliverOrder(orderId: widget.orderId);
-                                 }else{
-                                   await context
-                                       .read<OrderProvider>()
-                                       .receivedOrder(orderId: widget.orderId);
-                                   await context
-                                       .read<OrderProvider>()
-                                       .confirmOrder(orderId: widget.orderId);
-                                   await context
-                                       .read<OrderProvider>()
-                                       .deliverOrder(orderId: widget.orderId);
-                                 }
-                                 getOrderDetail();
+                                onTap: () async {
+                                  if (widget.isSeller) {
+                                    if (ReceiveOrderTime != null &&
+                                        ConfirmOrderTime != null) {
+                                      await context
+                                          .read<OrderProvider>()
+                                          .deliverOrder(
+                                              orderId: widget.orderId);
+                                    } else if (ReceiveOrderTime != null) {
+                                      await context
+                                          .read<OrderProvider>()
+                                          .confirmOrder(
+                                              orderId: widget.orderId);
+                                      await context
+                                          .read<OrderProvider>()
+                                          .deliverOrder(
+                                              orderId: widget.orderId);
+                                    } else {
+                                      await context
+                                          .read<OrderProvider>()
+                                          .receivedOrder(
+                                              orderId: widget.orderId);
+                                      await context
+                                          .read<OrderProvider>()
+                                          .confirmOrder(
+                                              orderId: widget.orderId);
+                                      await context
+                                          .read<OrderProvider>()
+                                          .deliverOrder(
+                                              orderId: widget.orderId);
+                                    }
+                                    getOrderDetail();
+                                  }
                                 },
                                 child: Row(
                                   children: [
@@ -285,21 +295,26 @@ class _MyOrderState extends State<MyOrder> {
                                 height: 20,
                               ),
                               GestureDetector(
-                                onTap: () async{
-                                  if(ReceiveOrderTime != null) {
-                                    await context
-                                      .read<OrderProvider>()
-                                      .confirmOrder(orderId: widget.orderId);
-                                  }else{
-                                    await context
-                                        .read<OrderProvider>()
-                                        .receivedOrder(orderId: widget.orderId);
+                                onTap: () async {
+                                  if (widget.isSeller) {
+                                    if (ReceiveOrderTime != null) {
+                                      await context
+                                          .read<OrderProvider>()
+                                          .confirmOrder(
+                                              orderId: widget.orderId);
+                                    } else {
+                                      await context
+                                          .read<OrderProvider>()
+                                          .receivedOrder(
+                                              orderId: widget.orderId);
 
-                                    await context
-                                        .read<OrderProvider>()
-                                        .confirmOrder(orderId: widget.orderId);
+                                      await context
+                                          .read<OrderProvider>()
+                                          .confirmOrder(
+                                              orderId: widget.orderId);
+                                    }
+                                    getOrderDetail();
                                   }
-                                  getOrderDetail();
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
@@ -333,11 +348,13 @@ class _MyOrderState extends State<MyOrder> {
                                 height: 20,
                               ),
                               GestureDetector(
-                                onTap: () async{
-                                  await context
-                                      .read<OrderProvider>()
-                                      .receivedOrder(orderId: widget.orderId);
-                                  getOrderDetail();
+                                onTap: () async {
+                                  if (widget.isSeller) {
+                                    await context
+                                        .read<OrderProvider>()
+                                        .receivedOrder(orderId: widget.orderId);
+                                    getOrderDetail();
+                                  }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 5.0),
