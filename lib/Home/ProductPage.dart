@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
-
+import 'dart:developer';
 import 'feedback_list.dart';
 
 class ProductPage extends StatefulWidget {
@@ -121,7 +121,7 @@ class _ProductPageState extends State<ProductPage> {
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>  FeedBackList(
+                              builder: (context) => FeedBackList(
                                     productId: widget.productModel.id,
                                   ))),
                       child: Column(
@@ -152,28 +152,15 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 20.0),
-                            child: Column(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                RatingBar.builder(
-                                  initialRating:
-                                      widget.productModel.rating ?? 0,
-                                  minRating: widget.productModel.rating ?? 0,
-                                  maxRating: widget.productModel.rating ?? 0,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  tapOnlyMode: true,
-                                  itemCount: 5,
-                                  itemPadding:
-                                      EdgeInsets.symmetric(horizontal: 4.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: brown,
-                                  ),
-                                  onRatingUpdate: (rating) {},
+                                Icon(Icons.star, color: darkbrown, size: 30),
+                                SizedBox(
+                                  width: 5.w,
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(12.0),
+                                  padding: EdgeInsets.all(4.0.sp),
                                   child: Text(
                                     "${widget.productModel.rating?.toStringAsFixed(1) ?? '0'}/5.0",
                                     style: TextStyle(fontSize: 20),
