@@ -5,11 +5,25 @@ import 'package:collection/collection.dart';
 
 class CartProvider extends ChangeNotifier {
   Future<bool> addProductInCart(
-      {required int productId,required int sellerId, required int quantity}) async {
+      {required int productId,
+      required int sellerId,
+      required int quantity}) async {
     var cartItems = await getCart();
-    var cartModel = cartItems
-        ?.firstWhereOrNull((element) => element.product.sellerId == sellerId);
-    if (cartModel == null) {
+    if (cartItems != null && cartItems.isNotEmpty) {
+      var cartModel = cartItems
+          .firstWhereOrNull((element) => element.product.sellerId == sellerId);
+      if (cartModel != null) {
+        bool result = await CartHandler.addProductInCart(
+            productId: productId, quantity: quantity);
+        if (result) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
       bool result = await CartHandler.addProductInCart(
           productId: productId, quantity: quantity);
       if (result) {
@@ -17,8 +31,6 @@ class CartProvider extends ChangeNotifier {
       } else {
         return false;
       }
-    }else{
-      return false;
     }
   }
 

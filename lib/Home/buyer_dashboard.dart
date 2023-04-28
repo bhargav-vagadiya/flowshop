@@ -301,8 +301,8 @@ class _BuyerDashboardState extends State<BuyerDashboard> {
                 child: const Align(
                   alignment: Alignment.topRight,
                   child: Text(
-                    "View More >> ",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    "Show More  ",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: brown),
                   ),
                 ),
               ),

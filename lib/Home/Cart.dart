@@ -366,77 +366,84 @@ class _CartState extends State<Cart> {
                             ],
                           ),
                           const Expanded(child: SizedBox()),
-                          selectedPaymentMethod == "Online"
-                              ? GooglePayButton(
-                                  paymentConfigurationAsset:
-                                      "payment_config/config.json",
-                                  width: MediaQuery.of(context).size.width,
-                                  onError: (error) {
-                                    log(error.toString(), error: true);
-                                  },
-                                  paymentItems: [
-                                    PaymentItem(
-                                        amount: "${subtotal + 10.0}",
-                                        label: "Flower",
-                                        status: PaymentItemStatus.final_price,
-                                        type: PaymentItemType.total)
-                                  ],
-                                  type: GooglePayButtonType.pay,
-                                  margin: const EdgeInsets.only(top: 15.0),
-                                  onPaymentResult: (result) async {
-                                    log(result.toString());
-                                    var status = await context
-                                        .read<OrderProvider>()
-                                        .placeOrder(
-                                            totalProductPrice:
-                                                subtotal.toDouble(),
-                                            shippingCharge: 10.0);
-                                    setState(() {});
-                                    if (status) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const MyOrders()));
-                                    }
-                                  },
-                                  loadingIndicator: const Center(
-                                    child: CircularProgressIndicator(),
+                          context.watch<OrderProvider>().loading
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: brown,
                                   ),
                                 )
-                              : ElevatedButton(
-                                  onPressed: () async {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => MyOrder(
-                                    //               orderId: orderId,
-                                    //             )));
-                                    var result = await context
-                                        .read<OrderProvider>()
-                                        .placeOrder(
-                                            totalProductPrice:
-                                                subtotal.toDouble(),
-                                            shippingCharge: 10.0);
-                                    setState(() {});
-                                    if (result) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const MyOrders()));
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      minimumSize: Size(
-                                          MediaQuery.of(context).size.width,
-                                          50)),
-                                  child: const Text(
-                                    "Proceed To Checkout",
-                                    style: TextStyle(
-                                        fontSize: 25, color: creamColor),
-                                  ),
-                                )
+                              : selectedPaymentMethod == "Online"
+                                  ? GooglePayButton(
+                                      paymentConfigurationAsset:
+                                          "payment_config/config.json",
+                                      width: MediaQuery.of(context).size.width,
+                                      onError: (error) {
+                                        log(error.toString(), error: true);
+                                      },
+                                      paymentItems: [
+                                        PaymentItem(
+                                            amount: "${subtotal + 10.0}",
+                                            label: "Flower",
+                                            status:
+                                                PaymentItemStatus.final_price,
+                                            type: PaymentItemType.total)
+                                      ],
+                                      type: GooglePayButtonType.pay,
+                                      margin: const EdgeInsets.only(top: 15.0),
+                                      onPaymentResult: (result) async {
+                                        log(result.toString());
+                                        var status = await context
+                                            .read<OrderProvider>()
+                                            .placeOrder(
+                                                totalProductPrice:
+                                                    subtotal.toDouble(),
+                                                shippingCharge: 10.0);
+                                        setState(() {});
+                                        if (status) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const MyOrders()));
+                                        }
+                                      },
+                                      loadingIndicator: const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                  : ElevatedButton(
+                                      onPressed: () async {
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) => MyOrder(
+                                        //               orderId: orderId,
+                                        //             )));
+                                        var result = await context
+                                            .read<OrderProvider>()
+                                            .placeOrder(
+                                                totalProductPrice:
+                                                    subtotal.toDouble(),
+                                                shippingCharge: 10.0);
+                                        setState(() {});
+                                        if (result) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const MyOrders()));
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(
+                                              MediaQuery.of(context).size.width,
+                                              50)),
+                                      child: const Text(
+                                        "Proceed To Checkout",
+                                        style: TextStyle(
+                                            fontSize: 25, color: creamColor),
+                                      ),
+                                    )
                         ],
                       ),
                     ))
